@@ -20,7 +20,7 @@ public class EventController {
     public ResponseEntity<?> fetchAllEvents() {
 
         try {
-            List<Event> event = eventService.getAllEvents();
+            List<Event> event = this.eventService.getAllEvents();
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -30,7 +30,7 @@ public class EventController {
     @PostMapping("/")
     public ResponseEntity<?> createEvent(@RequestBody EventRequest request) {
         try {
-            Event event = eventService.addEvent(request);
+            Event event = this.eventService.addEvent(request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -40,7 +40,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<?> fetchEvent(@PathVariable String eventId) {
         try {
-            Event event = eventService.getEvent(eventId);
+            Event event = this.eventService.getEvent(eventId);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -50,7 +50,7 @@ public class EventController {
     @PatchMapping("/{eventId}")
     public ResponseEntity<?> updateEvent(@PathVariable String eventId, @RequestBody EventRequest request) {
         try {
-            Event event = eventService.partialUpdate(eventId, request);
+            Event event = this.eventService.partialUpdate(eventId, request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

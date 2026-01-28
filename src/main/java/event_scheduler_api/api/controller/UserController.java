@@ -20,7 +20,7 @@ public class UserController {
     @GetMapping("/")
     public ResponseEntity<?> fetchAllUsers() {
         try {
-            List<UserResponse> users = userService.getAllUsers();
+            List<UserResponse> users = this.userService.getAllUsers();
             return ResponseEntity.status(HttpStatus.OK).body(users);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

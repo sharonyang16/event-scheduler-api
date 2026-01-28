@@ -13,7 +13,7 @@ import java.util.List;
 
 
 @Data
-//@Entity
+@Entity
 @Table(name = "event")
 public class Event {
     @Id
@@ -52,6 +52,9 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.participants = new ArrayList<EventParticipant>();
+    }
+
+    protected Event() {
     }
 
 

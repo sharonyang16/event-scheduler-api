@@ -15,21 +15,21 @@ public class EventService {
     private EventRepository eventRepository;
 
     public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+        return this.eventRepository.findAll();
     }
 
     public Event getEvent(String id) throws Exception {
-        return eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        return this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
     }
 
     public Event addEvent(EventRequest request) throws Exception {
         Event event = new Event(request.getName(), new User(), request.getStartTime(), request.getEndTime());
-        eventRepository.save(event);
+        this.eventRepository.save(event);
         return event;
     }
 
     public Event partialUpdate(String id, EventRequest request) throws Exception {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
         if (request.getName() != null) {
             event.setName(request.getName());
         }
@@ -43,7 +43,7 @@ public class EventService {
             event.setHost(request.getHost());
         }
 
-        eventRepository.save(event);
+        this.eventRepository.save(event);
 
         return event;
     }
