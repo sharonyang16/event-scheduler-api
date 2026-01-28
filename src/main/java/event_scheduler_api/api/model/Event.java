@@ -2,6 +2,9 @@ package event_scheduler_api.api.model;
 
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@Data
 @Entity
 @Table(name = "event")
 public class Event {
@@ -17,14 +21,17 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String eventId;
     private String name;
+
     // @OneToOne
     // @JoinColumn
     //private User host;
     private String host;
     private Date startDate;
     private Date endDate;
+
     @OneToMany
     @JoinColumn
+    @Getter(AccessLevel.NONE)
     private List<EventParticipantStatus> participants;
 
     public Event(String name, String host, Date startDate, Date endDate) throws Exception {
@@ -44,23 +51,11 @@ public class Event {
     protected Event() {
     }
 
-    public String getId() {
-        return this.eventId;
-    }
-
-    public String getName() {
-        return this.name;
-    }
-
     public void setName(String name) throws Exception {
         if (name.isEmpty()) {
             throw new Exception("Event name cannot be blank!");
         }
         this.name = name;
-    }
-
-    public String getHost() {
-        return this.host;
     }
 
     private boolean isUUIDValid(String uuid) {
@@ -79,19 +74,11 @@ public class Event {
         this.host = host;
     }
 
-    public Date getStartDate() {
-        return this.startDate;
-    }
-
     public void setStartDate(Date startDate) throws Exception {
         if (startDate.after(this.endDate)) {
             throw new Exception("Event start date cannot be after event end!");
         }
         this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return this.endDate;
     }
 
     public void setEndDate(Date endDate) throws Exception {
@@ -101,10 +88,11 @@ public class Event {
         this.endDate = endDate;
     }
 
-    /*
-    public EventParticipantStatus[] getParticipants() {
-        return this.participants.clone();
+    public List<EventParticipantStatus> getParticipants() {
+        return new ArrayList<>(this.participants);
     }
+
+    /*
     public void setParticipants(EventParticipantStatus[] participants) throws Exception {
         this.participants = participants;
     } */

@@ -57,5 +57,7 @@ public class EventController {
         }
     }
 
+    // TODO: @DeleteMapping("/{eventId})
+
 
 }

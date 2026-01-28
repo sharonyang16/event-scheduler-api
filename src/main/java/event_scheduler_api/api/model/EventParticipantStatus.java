@@ -1,7 +1,9 @@
 package event_scheduler_api.api.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 @Table(name = "event_participant_status")
 public class EventParticipantStatus {
@@ -23,23 +25,4 @@ public class EventParticipantStatus {
     protected EventParticipantStatus() {
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public Event getEvent() {
-        return this.event;
-    }
-
-    public String getUser() {
-        return this.user;
-    }
-
-    public boolean getConfirmed() {
-        return this.confirmed;
-    }
-
-    public void setConfirmed(boolean confirmed) {
-        this.confirmed = confirmed;
-    }
 }
