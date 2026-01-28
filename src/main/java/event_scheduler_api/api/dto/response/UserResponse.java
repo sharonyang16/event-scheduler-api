@@ -4,7 +4,6 @@ import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.EventParticipant;
 import lombok.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Value

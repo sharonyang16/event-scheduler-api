@@ -1,7 +1,6 @@
 package event_scheduler_api.api.controller;
 
 import event_scheduler_api.api.dto.response.UserResponse;
-import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,4 +26,9 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    // TODO: signup
+    // TODO: login
+    // TODO: logout
+    // TODO: delete
 }
