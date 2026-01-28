@@ -2,6 +2,7 @@ package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.EventRequest;
+import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class EventService {
     }
 
     public Event addEvent(EventRequest request) throws Exception {
-        Event event = new Event(request.getName(), "", request.getStartDate(), request.getEndDate());
+        Event event = new Event(request.getName(), new User(), request.getStartTime(), request.getEndTime());
         eventRepository.save(event);
         return event;
     }
@@ -32,11 +33,11 @@ public class EventService {
         if (request.getName() != null) {
             event.setName(request.getName());
         }
-        if (request.getStartDate() != null) {
-            event.setStartDate(request.getStartDate());
+        if (request.getStartTime() != null) {
+            event.setStartTime(request.getStartTime());
         }
-        if (request.getEndDate() != null) {
-            event.setEndDate(request.getEndDate());
+        if (request.getEndTime() != null) {
+            event.setEndTime(request.getEndTime());
         }
         if (request.getParticipants() != null) {
             event.setHost(request.getHost());

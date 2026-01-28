@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,93 +14,69 @@ import java.util.UUID;
 
 
 @Data
-@Entity
+//@Entity
 @Table(name = "event")
 public class Event {
     @Id
     @Column(name = "event_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String eventId;
+
+    @Column(nullable = false)
     private String name;
 
-    // @OneToOne
-    // @JoinColumn
-    //private User host;
-    private String host;
-    private Date startDate;
-    private Date endDate;
+    @OneToOne
+    @JoinColumn(name = "host_id", nullable = false)
+    private User host;
 
-    @OneToMany
-    @JoinColumn
+    @Column(name = "start_time", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private Date startTime;
+
+    @Column(name = "end_time", nullable = false)
+    @Setter(AccessLevel.NONE)
+    private Date endTime;
+
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
-    private List<EventParticipantStatus> participants;
+    private List<EventParticipant> participants;
 
-    public Event(String name, String host, Date startDate, Date endDate) throws Exception {
+    public Event(String name, User host, Date startTime, Date endTime) throws Exception {
         if (name.isEmpty()) {
             throw new Exception("Event name cannot be blank!");
         }
-        if (startDate.after(endDate)) {
+        if (startTime.after(endTime)) {
             throw new Exception("Event start time must be before event end!");
         }
         this.name = name;
         this.host = host;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.participants = new ArrayList<EventParticipantStatus>();
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.participants = new ArrayList<EventParticipant>();
     }
 
-    protected Event() {
-    }
 
-    public void setName(String name) throws Exception {
-        if (name.isEmpty()) {
-            throw new Exception("Event name cannot be blank!");
-        }
-        this.name = name;
-    }
-
-    private boolean isUUIDValid(String uuid) {
-        try {
-            UUID.fromString(uuid);
-            return true;
-        } catch (IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public void setHost(String host) throws Exception {
-        if (isUUIDValid((host))) {
-            throw new Exception("Event name cannot be blank!");
-        }
-        this.host = host;
-    }
-
-    public void setStartDate(Date startDate) throws Exception {
-        if (startDate.after(this.endDate)) {
+    public void setStartTime(Date startTime) throws Exception {
+        if (startTime.after(this.endTime)) {
             throw new Exception("Event start date cannot be after event end!");
         }
-        this.startDate = startDate;
+        this.startTime = startTime;
     }
 
-    public void setEndDate(Date endDate) throws Exception {
-        if (endDate.before(this.startDate)) {
+    public void setEndTime(Date endTime) throws Exception {
+        if (endTime.before(this.startTime)) {
             throw new Exception("Event end date cannot be before event start!");
         }
-        this.endDate = endDate;
+        this.endTime = endTime;
     }
 
-    public List<EventParticipantStatus> getParticipants() {
-        return new ArrayList<>(this.participants);
+    public List<EventParticipant> getParticipants() {
+        return new ArrayList<EventParticipant>(this.participants);
     }
 
-    /*
-    public void setParticipants(EventParticipantStatus[] participants) throws Exception {
-        this.participants = participants;
-    } */
+    // TODO: public void addParticipant
 
-    // public void addParticipant
-
-    // public void removeParticipant
+    // TODO: public void removeParticipant
 }
 
 
