@@ -17,43 +17,43 @@ public class EventController {
     private EventService eventService;
 
     @GetMapping("/")
-    public ResponseEntity<List<Event>> fetchAllEvents() {
+    public ResponseEntity<?> fetchAllEvents() {
 
         try {
             List<Event> event = eventService.getAllEvents();
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PostMapping("/")
-    public ResponseEntity<Event> createEvent(@RequestBody EventRequest request) {
+    public ResponseEntity<?> createEvent(@RequestBody EventRequest request) {
         try {
             Event event = eventService.addEvent(request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @GetMapping("/{eventId}")
-    public ResponseEntity<Event> fetchEvent(@PathVariable String eventId) {
+    public ResponseEntity<?> fetchEvent(@PathVariable String eventId) {
         try {
             Event event = eventService.getEvent(eventId);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PatchMapping("/{eventId}")
-    public ResponseEntity<Event> updateEvent(@PathVariable String eventId, @RequestBody EventRequest request) {
+    public ResponseEntity<?> updateEvent(@PathVariable String eventId, @RequestBody EventRequest request) {
         try {
             Event event = eventService.partialUpdate(eventId, request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
