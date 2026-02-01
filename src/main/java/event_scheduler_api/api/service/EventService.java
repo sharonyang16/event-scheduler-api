@@ -7,6 +7,8 @@ import event_scheduler_api.api.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -23,7 +25,11 @@ public class EventService {
     }
 
     public Event addEvent(EventRequest request) throws Exception {
-        Event event = new Event(request.getName(), new User(), request.getStartTime(), request.getEndTime());
+        Event event = new Event(
+                request.getName(),
+                new User(),
+                ZonedDateTime.of(request.getStartTime(),ZoneId.of(request.getTimezone())),
+                ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
         this.eventRepository.save(event);
         return event;
     }
@@ -34,10 +40,18 @@ public class EventService {
             event.setName(request.getName());
         }
         if (request.getStartTime() != null) {
-            event.setStartTime(request.getStartTime());
+            if (request.getTimezone() != null) {
+                event.setStartTime(ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())));
+            } else {
+                throw new Exception("Timezone must be specified!");
+            }
         }
         if (request.getEndTime() != null) {
-            event.setEndTime(request.getEndTime());
+            if (request.getTimezone() != null) {
+                event.setEndTime(ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
+            } else {
+                throw new Exception("Timezone must be specified!");
+            }
         }
         if (request.getParticipants() != null) {
             event.setHost(request.getHost());

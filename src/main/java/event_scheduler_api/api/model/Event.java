@@ -6,9 +6,12 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -24,27 +27,35 @@ public class Event {
     @Column(nullable = false)
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "host_id", nullable = false)
     private User host;
 
     @Column(name = "start_time", nullable = false)
     @Setter(AccessLevel.NONE)
-    private Date startTime;
+    private ZonedDateTime startTime;
 
     @Column(name = "end_time", nullable = false)
     @Setter(AccessLevel.NONE)
-    private Date endTime;
+    private ZonedDateTime endTime;
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participants;
 
-    public Event(String name, User host, Date startTime, Date endTime) throws Exception {
+    @CreatedDate
+    @Column(name = "time_created", nullable = false)
+    private Instant timeCreated;
+
+    @LastModifiedDate
+    @Column(name = "time_updated", nullable = false)
+    private Instant timeUpdated;
+
+    public Event(String name, User host, ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
         if (name.isEmpty()) {
             throw new Exception("Event name cannot be blank!");
         }
-        if (startTime.after(endTime)) {
+        if (startTime.isAfter(endTime)) {
             throw new Exception("Event start time must be before event end!");
         }
         this.name = name;
@@ -58,15 +69,15 @@ public class Event {
     }
 
 
-    public void setStartTime(Date startTime) throws Exception {
-        if (startTime.after(this.endTime)) {
+    public void setStartTime(ZonedDateTime startTime) throws Exception {
+        if (startTime.isAfter(this.endTime)) {
             throw new Exception("Event start date cannot be after event end!");
         }
         this.startTime = startTime;
     }
 
-    public void setEndTime(Date endTime) throws Exception {
-        if (endTime.before(this.startTime)) {
+    public void setEndTime(ZonedDateTime endTime) throws Exception {
+        if (endTime.isBefore(this.startTime)) {
             throw new Exception("Event end date cannot be before event start!");
         }
         this.endTime = endTime;
