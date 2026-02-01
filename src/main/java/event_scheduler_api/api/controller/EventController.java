@@ -19,12 +19,11 @@ public class EventController {
 
     @GetMapping("/")
     public ResponseEntity<?> fetchAllEvents() {
-
         try {
             List<Event> event = this.eventService.getAllEvents();
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -44,7 +43,7 @@ public class EventController {
             Event event = this.eventService.getEvent(eventId);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -54,11 +53,18 @@ public class EventController {
             Event event = this.eventService.partialUpdate(eventId, request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
 
-    // TODO: @DeleteMapping("/{eventId})
-
+    @DeleteMapping("/{eventId}")
+    public ResponseEntity<?> removeEvent(@PathVariable String eventId) {
+        try {
+           this.eventService.deleteEvent(eventId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Event deleted."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
 
 }

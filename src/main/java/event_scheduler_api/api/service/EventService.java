@@ -28,7 +28,7 @@ public class EventService {
         Event event = new Event(
                 request.getName(),
                 new User(),
-                ZonedDateTime.of(request.getStartTime(),ZoneId.of(request.getTimezone())),
+                ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())),
                 ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
         this.eventRepository.save(event);
         return event;
@@ -62,4 +62,7 @@ public class EventService {
         return event;
     }
 
+    public void deleteEvent(String id) {
+        this.eventRepository.deleteById(id);
+    }
 }
