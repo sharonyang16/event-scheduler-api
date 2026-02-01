@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +38,10 @@ public class User {
     @OneToMany(mappedBy = "user")
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participatingEvents;
+
+    @CreatedDate
+    @Column(name = "time_joined", nullable = false, updatable = false)
+    private Instant timeJoined;
 
     public List<Event> getHostingEvents() {
         return new ArrayList<Event>(this.hostingEvents);

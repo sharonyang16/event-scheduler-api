@@ -7,6 +7,8 @@ import event_scheduler_api.api.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @Service
@@ -15,37 +17,52 @@ public class EventService {
     private EventRepository eventRepository;
 
     public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+        return this.eventRepository.findAll();
     }
 
     public Event getEvent(String id) throws Exception {
-        return eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        return this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
     }
 
     public Event addEvent(EventRequest request) throws Exception {
-        Event event = new Event(request.getName(), new User(), request.getStartTime(), request.getEndTime());
-        eventRepository.save(event);
+        Event event = new Event(
+                request.getName(),
+                new User(),
+                ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())),
+                ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
+        this.eventRepository.save(event);
         return event;
     }
 
     public Event partialUpdate(String id, EventRequest request) throws Exception {
-        Event event = eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
         if (request.getName() != null) {
             event.setName(request.getName());
         }
         if (request.getStartTime() != null) {
-            event.setStartTime(request.getStartTime());
+            if (request.getTimezone() != null) {
+                event.setStartTime(ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())));
+            } else {
+                throw new Exception("Timezone must be specified!");
+            }
         }
         if (request.getEndTime() != null) {
-            event.setEndTime(request.getEndTime());
+            if (request.getTimezone() != null) {
+                event.setEndTime(ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
+            } else {
+                throw new Exception("Timezone must be specified!");
+            }
         }
         if (request.getParticipants() != null) {
             event.setHost(request.getHost());
         }
 
-        eventRepository.save(event);
+        this.eventRepository.save(event);
 
         return event;
     }
 
+    public void deleteEvent(String id) {
+        this.eventRepository.deleteById(id);
+    }
 }

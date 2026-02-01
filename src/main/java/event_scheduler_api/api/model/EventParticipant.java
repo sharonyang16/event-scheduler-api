@@ -2,6 +2,10 @@ package event_scheduler_api.api.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.Instant;
 
 @Data
 @Entity
@@ -21,5 +25,13 @@ public class EventParticipant {
 
     @Column(nullable = false)
     private boolean confirmed;
+
+    @CreatedDate
+    @Column(name = "time_created", nullable = false, updatable = false)
+    private Instant timeCreated;
+
+    @LastModifiedDate
+    @Column(name = "time_updated",nullable = false)
+    private Instant timeUpdated;
 
 }
