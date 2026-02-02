@@ -18,16 +18,15 @@ public class UserService {
         List<User> allUsers = this.userRepository.findAll();
 
         return allUsers.stream().map(
-                user -> UserResponse.builder()
-                        .userId(user.getUserId())
-                        .email(user.getEmail())
-                        .firstName(user.getFirstName())
-                        .lastName(user.getLastName())
-                        .hostingEvents(user.getHostingEvents())
-                        .participatingEvents(user.getParticipatingEvents())
-                        .build())
+                        user -> UserResponse.builder()
+                                .userId(user.getUserId())
+                                .email(user.getEmail())
+                                .firstName(user.getFirstName())
+                                .lastName(user.getLastName())
+                                .hostingEvents(user.getHostingEvents())
+                                .participatingEvents(user.getParticipatingEvents())
+                                .build())
                 .collect(Collectors.toList());
     }
-
 
 }
