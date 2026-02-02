@@ -29,4 +29,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteUser(String id) {
+        this.userRepository.deleteByUserId(id);
+    }
 }
