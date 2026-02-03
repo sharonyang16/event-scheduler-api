@@ -23,8 +23,9 @@ public class EventParticipant {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean confirmed;
+    private EventParticipationStatus confirmed;
 
     @CreatedDate
     @Column(name = "time_created", nullable = false, updatable = false)

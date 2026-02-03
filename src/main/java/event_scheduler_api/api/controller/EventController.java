@@ -1,5 +1,6 @@
 package event_scheduler_api.api.controller;
 
+import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.EventRequest;
@@ -20,7 +21,7 @@ public class EventController {
     @GetMapping("/")
     public ResponseEntity<?> fetchAllEvents() {
         try {
-            List<Event> event = this.eventService.getAllEvents();
+            List<EventResponse> event = this.eventService.getAllEvents();
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
@@ -30,7 +31,7 @@ public class EventController {
     @PostMapping("/")
     public ResponseEntity<?> createEvent(@RequestBody EventRequest request) {
         try {
-            Event event = this.eventService.addEvent(request);
+            EventResponse event = this.eventService.addEvent(request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));

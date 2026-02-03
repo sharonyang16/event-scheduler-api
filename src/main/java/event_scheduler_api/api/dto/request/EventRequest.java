@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class EventRequest {
     private String name;
-    private String host;
+    private String host; // Host's UUID
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;

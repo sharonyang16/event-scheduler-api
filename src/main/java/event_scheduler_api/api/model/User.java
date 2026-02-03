@@ -42,7 +42,7 @@ public class User {
 
     @OneToMany(mappedBy = "host")
     @Getter(AccessLevel.NONE)
-    private List<Event> hostingEvents  = new ArrayList<>();
+    private List<Event> hostingEvents = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     @Getter(AccessLevel.NONE)
