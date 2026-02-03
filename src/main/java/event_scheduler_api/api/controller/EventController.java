@@ -52,7 +52,7 @@ public class EventController {
     @PatchMapping("/{eventId}")
     public ResponseEntity<?> updateEvent(@PathVariable String eventId, @RequestBody EventRequest request) {
         try {
-            Event event = this.eventService.partialUpdate(eventId, request);
+            EventResponse event = this.eventService.partialUpdate(eventId, request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));

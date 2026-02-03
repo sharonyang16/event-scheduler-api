@@ -58,6 +58,14 @@ public class Event {
     @Column(name = "time_updated", nullable = false)
     private Instant timeUpdated;
 
+    public void setTime(ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
+        if (startTime.isAfter(endTime)) {
+            throw new Exception("Event start date cannot be after event end!");
+        }
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
     public void setStartTime(ZonedDateTime startTime) throws Exception {
         if (this.endTime != null) {
             if (startTime.isAfter(this.endTime)) {
@@ -87,7 +95,6 @@ public class Event {
 
     public void removeParticipant(EventParticipant participant) {
         participants.remove(participant);
-        participant.setEvent(null);
     }
 
 }

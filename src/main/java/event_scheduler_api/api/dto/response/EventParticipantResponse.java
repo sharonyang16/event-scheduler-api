@@ -12,7 +12,7 @@ public class EventParticipantResponse {
     String email;
     String firstName;
     String lastName;
-    EventParticipationStatus confirmed;
+    EventParticipationStatus status;
     Instant timeCreated;
     Instant timeUpdated;
 }
