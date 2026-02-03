@@ -141,8 +141,10 @@ public class EventService {
         return events.stream().map(this::eventToResponse).toList();
     }
 
-    public Event getEvent(String id) throws Exception {
-        return this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+    public EventResponse getEvent(String id) throws Exception {
+        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+
+        return this.eventToResponse(event);
     }
 
     public EventResponse addEvent(CreateEventRequest request) throws Exception {

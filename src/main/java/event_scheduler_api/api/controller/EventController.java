@@ -3,7 +3,6 @@ package event_scheduler_api.api.controller;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
-import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.EventRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,7 +41,7 @@ public class EventController {
     @GetMapping("/{eventId}")
     public ResponseEntity<?> fetchEvent(@PathVariable String eventId) {
         try {
-            Event event = this.eventService.getEvent(eventId);
+            EventResponse event = this.eventService.getEvent(eventId);
             return ResponseEntity.status(HttpStatus.OK).body(event);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
