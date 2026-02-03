@@ -5,9 +5,7 @@ import event_scheduler_api.api.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // TODO: Deprecate in the future, only for testing purposes
     @GetMapping("/")
     public ResponseEntity<?> fetchAllUsers() {
         try {
@@ -28,8 +27,23 @@ public class UserController {
         }
     }
 
-    // TODO: signup
-    // TODO: login
-    // TODO: logout
-    // TODO: delete
+    @GetMapping("/me")
+    public ResponseEntity<?> fetchUser() {
+        try {
+            UserResponse user = this.userService.getUser();
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteUser() {
+        try {
+            this.userService.deleteUser();
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "User deleted."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
 }

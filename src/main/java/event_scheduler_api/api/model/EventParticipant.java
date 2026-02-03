@@ -31,7 +31,7 @@ public class EventParticipant {
     private Instant timeCreated;
 
     @LastModifiedDate
-    @Column(name = "time_updated",nullable = false)
+    @Column(name = "time_updated", nullable = false)
     private Instant timeUpdated;
 
 }
