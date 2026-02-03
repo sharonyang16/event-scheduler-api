@@ -17,10 +17,10 @@ import java.util.Map;
 
 @Component
 public class JwtUtil {
-    @Value("${jwt.secret:placeholderSecretKey}")
+    @Value("${jwt.secret}")
     private String SECRET_KEY;
 
-    @Value("${jwt.expiration:1209600000}") // Two Weeks
+    @Value("${jwt.expiration}")
     private Long EXPIRATION_TIME;
 
     public String generateToken(String username) {

@@ -26,10 +26,20 @@ public class UserController {
         }
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<?> removeEvent(@PathVariable String userId) {
+    @GetMapping("/me")
+    public ResponseEntity<?> fetchUser() {
         try {
-            this.userService.deleteUser(userId);
+            UserResponse user = this.userService.getUser();
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<?> deleteUser() {
+        try {
+            this.userService.deleteUser();
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "User deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));

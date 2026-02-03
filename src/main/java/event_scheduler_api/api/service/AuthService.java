@@ -2,9 +2,11 @@ package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.request.LoginRequest;
 import event_scheduler_api.api.dto.request.SignUpRequest;
+import event_scheduler_api.api.dto.response.AuthResponse;
 import event_scheduler_api.api.dto.response.UserResponse;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
+import event_scheduler_api.api.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,7 +26,10 @@ public class AuthService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public UserResponse createUser(SignUpRequest request) throws Exception {
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    public AuthResponse createUser(SignUpRequest request) throws Exception {
         if (this.userRepository.existsByEmail(request.getEmail())) {
             throw new Exception("Account with email already exists!");
         }
@@ -38,17 +43,12 @@ public class AuthService {
 
         this.userRepository.save(user);
 
-        return UserResponse.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .hostingEvents(user.getHostingEvents())
-                .participatingEvents(user.getParticipatingEvents())
-                .build();
+        String token = jwtUtil.generateToken(request.getEmail());
+
+        return AuthResponse.builder().token(token).email(user.getEmail()).build();
     }
 
-    public UserResponse loginUser(LoginRequest request) throws Exception {
+    public AuthResponse loginUser(LoginRequest request) throws Exception {
         this.authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getEmail(),
@@ -58,13 +58,8 @@ public class AuthService {
 
         User user = this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("User with email not found!"));
 
-        return UserResponse.builder()
-                .userId(user.getUserId())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .hostingEvents(user.getHostingEvents())
-                .participatingEvents(user.getParticipatingEvents())
-                .build();
+        String token = jwtUtil.generateToken(request.getEmail());
+
+        return AuthResponse.builder().token(token).email(user.getEmail()).build();
     }
 }
