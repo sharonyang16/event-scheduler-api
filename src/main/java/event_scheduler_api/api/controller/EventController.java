@@ -1,5 +1,6 @@
 package event_scheduler_api.api.controller;
 
+import event_scheduler_api.api.dto.request.CreateEventRequest;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
 import event_scheduler_api.api.model.Event;
@@ -29,7 +30,7 @@ public class EventController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<?> createEvent(@RequestBody EventRequest request) {
+    public ResponseEntity<?> createEvent(@RequestBody CreateEventRequest request) {
         try {
             EventResponse event = this.eventService.addEvent(request);
             return ResponseEntity.status(HttpStatus.OK).body(event);

@@ -49,7 +49,6 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participants = new ArrayList<>();
-    ;
 
     @CreatedDate
     @Column(name = "time_created", nullable = false, updatable = false)
@@ -78,12 +77,19 @@ public class Event {
     }
 
     public List<EventParticipant> getParticipants() {
-        return new ArrayList<EventParticipant>(this.participants);
+        return new ArrayList<>(this.participants);
     }
 
-    // TODO: public void addParticipant
+    public void addParticipant(EventParticipant participant) {
+        this.participants.add(participant);
+        participant.setEvent(this);
+    }
 
-    // TODO: public void removeParticipant
+    public void removeParticipant(EventParticipant participant) {
+        participants.remove(participant);
+        participant.setEvent(null);
+    }
+
 }
 
 
