@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class EventRequest {
+public class CreateEventRequest {
     private String name;
     private String host; // Host's UUID
 
@@ -18,5 +18,5 @@ public class EventRequest {
     private LocalDateTime endTime;
 
     private String timezone;
-    private List<EventParticipantRequest> participants;
+    private List<String> participants;
 }

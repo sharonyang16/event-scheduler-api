@@ -4,11 +4,13 @@ import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 
 @Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "event_participant")
 public class EventParticipant {
     @Id
@@ -23,8 +25,9 @@ public class EventParticipant {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private boolean confirmed;
+    private EventParticipationStatus status;
 
     @CreatedDate
     @Column(name = "time_created", nullable = false, updatable = false)

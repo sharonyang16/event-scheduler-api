@@ -1,6 +1,7 @@
 package event_scheduler_api.api.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -17,7 +19,12 @@ import java.util.List;
 
 @Data
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "event")
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "eventId"
+)
 public class Event {
     @Id
     @Column(name = "event_id")
@@ -41,55 +48,55 @@ public class Event {
 
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
-    private List<EventParticipant> participants;
+    private List<EventParticipant> participants = new ArrayList<>();
 
     @CreatedDate
-    @Column(name = "time_created", nullable = false)
+    @Column(name = "time_created", nullable = false, updatable = false)
     private Instant timeCreated;
 
     @LastModifiedDate
     @Column(name = "time_updated", nullable = false)
     private Instant timeUpdated;
 
-    public Event(String name, User host, ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
-        if (name.isEmpty()) {
-            throw new Exception("Event name cannot be blank!");
-        }
+    public void setTime(ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
         if (startTime.isAfter(endTime)) {
-            throw new Exception("Event start time must be before event end!");
+            throw new Exception("Event start date cannot be after event end!");
         }
-        this.name = name;
-        this.host = host;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.participants = new ArrayList<EventParticipant>();
     }
-
-    protected Event() {
-    }
-
 
     public void setStartTime(ZonedDateTime startTime) throws Exception {
-        if (startTime.isAfter(this.endTime)) {
-            throw new Exception("Event start date cannot be after event end!");
+        if (this.endTime != null) {
+            if (startTime.isAfter(this.endTime)) {
+                throw new Exception("Event start date cannot be after event end!");
+            }
         }
         this.startTime = startTime;
     }
 
     public void setEndTime(ZonedDateTime endTime) throws Exception {
-        if (endTime.isBefore(this.startTime)) {
-            throw new Exception("Event end date cannot be before event start!");
+        if (this.startTime != null) {
+            if (endTime.isBefore(this.startTime)) {
+                throw new Exception("Event end date cannot be before event start!");
+            }
         }
         this.endTime = endTime;
     }
 
     public List<EventParticipant> getParticipants() {
-        return new ArrayList<EventParticipant>(this.participants);
+        return new ArrayList<>(this.participants);
     }
 
-    // TODO: public void addParticipant
+    public void addParticipant(EventParticipant participant) {
+        this.participants.add(participant);
+        participant.setEvent(this);
+    }
 
-    // TODO: public void removeParticipant
+    public void removeParticipant(EventParticipant participant) {
+        participants.remove(participant);
+    }
+
 }
 
 
