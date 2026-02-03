@@ -4,6 +4,7 @@ import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.EventRequest;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
+import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +17,9 @@ public class EventService {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public List<Event> getAllEvents() {
         return this.eventRepository.findAll();
     }
@@ -25,12 +29,17 @@ public class EventService {
     }
 
     public Event addEvent(EventRequest request) throws Exception {
-        Event event = new Event(
-                request.getName(),
-                new User(),
-                ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())),
-                ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
+        User user = this.userRepository.findByUserId(request.getHost()).orElseThrow(
+                () -> new Exception("User does not exist!"));
+
+        Event event = new Event();
+        event.setName(request.getName());
+        event.setHost(user);
+        event.setStartTime(ZonedDateTime.of(request.getStartTime(), ZoneId.of(request.getTimezone())));
+        event.setEndTime(ZonedDateTime.of(request.getEndTime(), ZoneId.of(request.getTimezone())));
+
         this.eventRepository.save(event);
+
         return event;
     }
 
@@ -54,7 +63,9 @@ public class EventService {
             }
         }
         if (request.getParticipants() != null) {
-            event.setHost(request.getHost());
+            User user = this.userRepository.findByUserId(request.getHost()).orElseThrow(
+                    () -> new Exception("User does not exist!"));
+            event.setHost(user);
         }
 
         this.eventRepository.save(event);

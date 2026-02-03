@@ -11,7 +11,7 @@ import java.util.List;
 @Data
 public class EventRequest {
     private String name;
-    private User host;
+    private String host;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
