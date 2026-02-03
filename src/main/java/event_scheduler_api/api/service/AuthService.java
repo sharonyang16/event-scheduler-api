@@ -43,7 +43,7 @@ public class AuthService {
 
         this.userRepository.save(user);
 
-        String token = jwtUtil.generateToken(request.getEmail());
+        String token = this.jwtUtil.generateToken(request.getEmail());
 
         return AuthResponse.builder().token(token).email(user.getEmail()).build();
     }
@@ -58,7 +58,7 @@ public class AuthService {
 
         User user = this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("User with email not found!"));
 
-        String token = jwtUtil.generateToken(request.getEmail());
+        String token = this.jwtUtil.generateToken(request.getEmail());
 
         return AuthResponse.builder().token(token).email(user.getEmail()).build();
     }

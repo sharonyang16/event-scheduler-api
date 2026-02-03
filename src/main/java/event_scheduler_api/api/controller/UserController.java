@@ -16,6 +16,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // TODO: Deprecate in the future, only for testing purposes
     @GetMapping("/")
     public ResponseEntity<?> fetchAllUsers() {
         try {
