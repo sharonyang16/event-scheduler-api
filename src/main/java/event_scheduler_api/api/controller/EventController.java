@@ -60,7 +60,7 @@ public class EventController {
     @DeleteMapping("/{eventId}")
     public ResponseEntity<?> removeEvent(@PathVariable String eventId) {
         try {
-           this.eventService.deleteEvent(eventId);
+            this.eventService.deleteEvent(eventId);
             return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Event deleted."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
