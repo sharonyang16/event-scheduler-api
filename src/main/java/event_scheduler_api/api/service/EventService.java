@@ -11,7 +11,6 @@ import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
-import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +24,6 @@ import java.util.stream.Collectors;
 public class EventService {
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -65,31 +61,32 @@ public class EventService {
     }
 
     private void addParticipant(Event event, String email) {
-        if (!event.getHost().getEmail().equals(email)) {
-            Optional<User> user = this.userRepository.findByEmail(email);
 
-            user.ifPresent(u -> {
+        if (!event.getHost().getEmail().equals(email)) {
+            try {
+                User user = this.userService.getUserByEmail(email);
+
                 EventParticipant eventParticipant = new EventParticipant();
                 eventParticipant.setEvent(event);
-                eventParticipant.setUser(u);
+                eventParticipant.setUser(user);
                 eventParticipant.setStatus(EventParticipationStatus.PENDING);
 
                 event.addParticipant(eventParticipant);
-            });
+            }
+            catch (Exception e) {
+                // do nothing for now
+            }
         }
     }
 
     private void removeParticipant(Event event, String email) {
-        Optional<User> user = this.userRepository.findByEmail(email);
+        Optional<EventParticipant> toRemove = event.getParticipants()
+                .stream()
+                .filter(p -> p.getUser().getEmail().equals(email))
+                .findFirst();
 
-        user.ifPresent(u -> {
-            Optional<EventParticipant> toRemove = event.getParticipants()
-                    .stream()
-                    .filter(p -> p.getUser().getEmail().equals(email))
-                    .findFirst();
+        toRemove.ifPresent(event::removeParticipant);
 
-            toRemove.ifPresent(event::removeParticipant);
-        });
     }
 
     private void updateParticipant(Event event, EventParticipantRequest request) {
@@ -201,9 +198,8 @@ public class EventService {
         }
 
         if (request.getHost() != null) {
-            User user = this.userRepository.findByUserId(request.getHost()).orElseThrow(
-                    () -> new Exception("User does not exist!"));
-            event.setHost(user);
+            User newHost = this.userService.getUserById(request.getHost());
+            event.setHost(newHost);
         }
 
 
