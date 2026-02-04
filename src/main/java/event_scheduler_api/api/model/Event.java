@@ -23,14 +23,9 @@ import java.util.List;
 @Table(name = "event")
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "eventId"
+        property = "id"
 )
-public class Event {
-    @Id
-    @Column(name = "event_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String eventId;
-
+public class Event extends BaseEntity {
     @Column(nullable = false)
     private String name;
 

@@ -35,7 +35,7 @@ public class EventService {
 
     private EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
-                .eventId(event.getEventId())
+                .eventId(event.getId().toString())
                 .name(event.getName())
                 .host(UserContactResponse.builder()
                         .email(event.getHost().getEmail())
