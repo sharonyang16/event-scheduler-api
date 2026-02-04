@@ -27,25 +27,7 @@ public class FriendRequestService {
     @Autowired
     FriendshipService friendshipService;
 
-    public FriendRequestResponse friendRequestToResponse(FriendRequest friendRequest) {
-        User sender = friendRequest.getSender();
-        User receiver = friendRequest.getReceiver();
-        return FriendRequestResponse.builder()
-                .sender(UserSummaryResponse.builder()
-                        .email(sender.getEmail())
-                        .firstName(sender.getFirstName())
-                        .lastName(sender.getLastName())
-                        .build())
-                .receiver(UserSummaryResponse.builder()
-                        .email(receiver.getEmail())
-                        .firstName(receiver.getFirstName())
-                        .lastName(receiver.getLastName())
-                        .build())
-                .status(friendRequest.getStatus())
-                .build();
-    }
-
-    public FriendRequest getFriendRequestById(String id) throws Exception {
+    private FriendRequest getFriendRequestById(String id) throws Exception {
         return this.friendRequestRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("Friend request with id " + id + " not found."));
     }
@@ -114,6 +96,7 @@ public class FriendRequestService {
         this.friendRequestRepository.save(friendRequest);
 
         this.friendshipService.createFriendship(user, friendRequest.getSender());
+        this.friendRequestRepository.delete(friendRequest);
     }
 
     public void rejectFriendRequestById(String id) throws Exception {
@@ -126,6 +109,7 @@ public class FriendRequestService {
 
         friendRequest.setStatus(FriendRequestStatus.REJECTED);
         this.friendRequestRepository.save(friendRequest);
+        this.friendRequestRepository.delete(friendRequest);
     }
 
     public void deleteFriendRequestById(String id) throws Exception {
@@ -136,6 +120,6 @@ public class FriendRequestService {
             throw new Exception("You cannot delete this friend request!");
         }
 
-        this.friendRequestRepository.deleteById(UUID.fromString(id));
+        this.friendRequestRepository.delete(friendRequest);
     }
 }
