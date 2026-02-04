@@ -7,9 +7,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class EventRequest {
+public class UpdateEventRequest {
     private String name;
-    private String host; // Host's UUID
+    private String host; // Host's email
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;

@@ -27,12 +27,22 @@ public class UserService {
                 .build();
     }
 
+    public User getUserById(String id) throws Exception {
+        return this.userRepository.findById(id)
+                .orElseThrow(() -> new Exception("User with id " + id + " not found."));
+    }
+
+    public User getUserByEmail(String email) throws Exception {
+        return this.userRepository.findByEmail(email)
+                .orElseThrow(() -> new Exception("User with email " + email + " not found."));
+    }
+
     public User getCurrentUser() throws Exception {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) throw new Exception("An error has occurred.");
         String email = auth.getName();
 
-        return this.userRepository.findByEmail(email).orElseThrow(() -> new Exception("User not found"));
+        return this.getUserByEmail(email);
     }
 
     public List<UserResponse> getAllUsers() {

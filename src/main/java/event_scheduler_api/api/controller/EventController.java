@@ -3,7 +3,7 @@ package event_scheduler_api.api.controller;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
-import event_scheduler_api.api.dto.request.EventRequest;
+import event_scheduler_api.api.dto.request.UpdateEventRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +49,7 @@ public class EventController {
     }
 
     @PatchMapping("/{eventId}")
-    public ResponseEntity<?> updateEvent(@PathVariable String eventId, @RequestBody EventRequest request) {
+    public ResponseEntity<?> updateEvent(@PathVariable String eventId, @RequestBody UpdateEventRequest request) {
         try {
             EventResponse event = this.eventService.partialUpdate(eventId, request);
             return ResponseEntity.status(HttpStatus.OK).body(event);
