@@ -12,7 +12,7 @@ import java.time.Instant;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "friend_request")
-public class FriendRequest extends BaseEntity{
+public class FriendRequest extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "sender_id", nullable = false)
     private User sender;

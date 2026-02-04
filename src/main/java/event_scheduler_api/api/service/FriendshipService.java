@@ -59,7 +59,7 @@ public class FriendshipService {
         return this.areFriends(user1, user2);
     }
 
-    public void deleteFriendshipById(String id) throws Exception{
+    public void deleteFriendshipById(String id) throws Exception {
         User user = this.userService.getCurrentUser();
         Friendship friendship = this.getFriendshipById(id);
 

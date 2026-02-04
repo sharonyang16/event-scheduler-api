@@ -6,7 +6,7 @@ import lombok.Value;
 @Value
 @Builder
 public class UserSummaryResponse {
-   String email;
-   String firstName;
-   String lastName;
+    String email;
+    String firstName;
+    String lastName;
 }
