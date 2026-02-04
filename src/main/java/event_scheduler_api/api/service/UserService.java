@@ -33,6 +33,7 @@ public class UserService {
 
     public UserSummaryResponse userToUserSummaryResponse(User user) {
         return UserSummaryResponse.builder()
+                .id(user.getId().toString())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())

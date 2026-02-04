@@ -1,5 +1,6 @@
 package event_scheduler_api.api.service;
 
+import event_scheduler_api.api.dto.response.FriendshipResponse;
 import event_scheduler_api.api.dto.response.UserSummaryResponse;
 import event_scheduler_api.api.model.Friendship;
 import event_scheduler_api.api.model.User;
@@ -44,12 +45,18 @@ public class FriendshipService {
         this.friendshipRepository.save(friendship);
     }
 
-    public List<UserSummaryResponse> getMyFriends() throws Exception {
+    public List<FriendshipResponse> getMyFriends() throws Exception {
         User user = this.userService.getCurrentUser();
 
-        List<User> friends = this.friendshipRepository.findFriendsByUser(user);
+        List<Friendship> friendships = this.friendshipRepository.findFriendshipsByUser(user);
 
-        return friends.stream().map(friend -> this.userService.userToUserSummaryResponse(friend)).toList();
+        return friendships.stream().map(friendship -> {
+            User friend = friendship.getUser1().equals(user) ? friendship.getUser2() : friendship.getUser1();
+            return FriendshipResponse.builder()
+                    .id(friendship.getId().toString())
+                    .friend(this.userService.userToUserSummaryResponse(friend))
+                    .build();
+        }).toList();
     }
 
     public boolean checkFriendship(String id) throws Exception {

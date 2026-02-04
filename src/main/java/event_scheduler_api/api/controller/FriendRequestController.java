@@ -1,8 +1,9 @@
 package event_scheduler_api.api.controller;
 
 import event_scheduler_api.api.dto.request.CreateFriendRequestRequest;
-import event_scheduler_api.api.dto.response.UserSummaryResponse;
-import event_scheduler_api.api.model.FriendRequest;
+import event_scheduler_api.api.dto.response.ReceivedFriendRequestResponse;
+import event_scheduler_api.api.dto.response.SentFriendRequestResponse;
+
 import event_scheduler_api.api.service.FriendRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,8 @@ public class FriendRequestController {
     @PostMapping("/")
     public ResponseEntity<?> createFriendRequest(@RequestBody CreateFriendRequestRequest request) {
         try {
-            FriendRequest friendRequest = this.friendRequestService.createFriendRequest(request);
-            return ResponseEntity.status(HttpStatus.OK).body(friendRequest);
+            this.friendRequestService.createFriendRequest(request);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Friend request sent."));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
@@ -33,7 +34,7 @@ public class FriendRequestController {
     @GetMapping("/received")
     public ResponseEntity<?> fetchReceivedRequests() {
         try {
-            List<UserSummaryResponse> friendRequests = this.friendRequestService.getMyReceived();
+            List<ReceivedFriendRequestResponse> friendRequests = this.friendRequestService.getMyReceived();
             return ResponseEntity.status(HttpStatus.OK).body(friendRequests);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
@@ -44,7 +45,7 @@ public class FriendRequestController {
     @GetMapping("/sent")
     public ResponseEntity<?> fetchSentRequests() {
         try {
-            List<UserSummaryResponse> friendRequests = this.friendRequestService.getMySent();
+            List<SentFriendRequestResponse> friendRequests = this.friendRequestService.getMySent();
             return ResponseEntity.status(HttpStatus.OK).body(friendRequests);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));

@@ -5,9 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class UserSummaryResponse {
+public class FriendshipResponse {
     String id;
-    String email;
-    String firstName;
-    String lastName;
+    UserSummaryResponse friend;
 }

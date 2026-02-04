@@ -1,10 +1,9 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.request.CreateFriendRequestRequest;
-import event_scheduler_api.api.dto.response.FriendRequestResponse;
-import event_scheduler_api.api.dto.response.UserResponse;
+import event_scheduler_api.api.dto.response.ReceivedFriendRequestResponse;
+import event_scheduler_api.api.dto.response.SentFriendRequestResponse;
 import event_scheduler_api.api.dto.response.UserSummaryResponse;
-import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.FriendRequest;
 import event_scheduler_api.api.model.FriendRequestStatus;
 import event_scheduler_api.api.model.User;
@@ -32,7 +31,7 @@ public class FriendRequestService {
                 .orElseThrow(() -> new Exception("Friend request with id " + id + " not found."));
     }
 
-    public FriendRequest createFriendRequest(CreateFriendRequestRequest request) throws Exception {
+    public void createFriendRequest(CreateFriendRequestRequest request) throws Exception {
         User sender = this.userService.getCurrentUser();
         User receiver = this.userService.getUserByEmail(request.getReceiver());
 
@@ -58,29 +57,35 @@ public class FriendRequestService {
         friendRequest.setStatus(FriendRequestStatus.PENDING);
 
         this.friendRequestRepository.save(friendRequest);
-
-        return friendRequest;
     }
 
-    public List<UserSummaryResponse> getMyReceived() throws Exception {
+    public List<ReceivedFriendRequestResponse> getMyReceived() throws Exception {
         User user = this.userService.getCurrentUser();
         List<FriendRequest> pendingRequests = this.friendRequestRepository.findFriendRequestsByReceiver(user)
                 .orElse(new ArrayList<>());
 
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
-                .map(friendRequest -> this.userService.userToUserSummaryResponse(friendRequest.getSender()))
+                .map(friendRequest ->
+                        ReceivedFriendRequestResponse.builder()
+                                .requestId(friendRequest.getId().toString())
+                                .sender(this.userService.userToUserSummaryResponse(friendRequest.getSender()))
+                                .build())
                 .toList();
     }
 
-    public List<UserSummaryResponse> getMySent() throws Exception {
+    public List<SentFriendRequestResponse> getMySent() throws Exception {
         User user = this.userService.getCurrentUser();
         List<FriendRequest> pendingRequests = this.friendRequestRepository.findFriendRequestsBySender(user)
                 .orElse(new ArrayList<>());
 
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
-                .map(friendRequest -> this.userService.userToUserSummaryResponse(friendRequest.getReceiver()))
+                .map(friendRequest ->
+                        SentFriendRequestResponse.builder()
+                                .requestId(friendRequest.getId().toString())
+                                .receiver(this.userService.userToUserSummaryResponse(friendRequest.getReceiver()))
+                                .build())
                 .toList();
     }
 

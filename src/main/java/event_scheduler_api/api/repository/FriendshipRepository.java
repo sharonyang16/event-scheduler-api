@@ -14,8 +14,8 @@ public interface FriendshipRepository extends JpaRepository<Friendship, UUID> {
     Optional<Friendship> findFriendshipByUser1AndUser2(User user1, User user2);
 
 
-    @Query("SELECT CASE WHEN f.user1 = :user THEN f.user2 ELSE f.user1 END " +
-            "FROM Friendship f " +
-            "WHERE f.user1 = :user OR f.user2 = :user")
-    List<User> findFriendsByUser(@Param("user") User user);
+    @Query("SELECT f FROM Friendship f WHERE f.user1 = :user OR f.user2 = :user")
+    List<Friendship> findFriendshipsByUser(@Param("user") User user);
+
+    List<Friendship> findFriendshipByUser1OrUser2(User user1, User user2);
 }
