@@ -28,6 +28,10 @@ public class EventService {
     @Autowired
     private UserService userService;
 
+    public Event getEventById(String id) throws Exception {
+        return this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event with id " + id + " not found!"));
+    }
+
     private EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
                 .eventId(event.getEventId())
@@ -72,8 +76,7 @@ public class EventService {
                 eventParticipant.setStatus(EventParticipationStatus.PENDING);
 
                 event.addParticipant(eventParticipant);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 // do nothing for now
             }
         }
@@ -142,7 +145,7 @@ public class EventService {
     }
 
     public EventResponse getEvent(String id) throws Exception {
-        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        Event event = this.getEventById(id);
 
         return this.eventToResponse(event);
     }
@@ -168,7 +171,7 @@ public class EventService {
     }
 
     public EventResponse partialUpdate(String id, UpdateEventRequest request) throws Exception {
-        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        Event event = this.getEventById(id);
         User user = this.userService.getCurrentUser();
 
         if (!user.getUserId().equals(event.getHost().getUserId())) {
@@ -214,18 +217,18 @@ public class EventService {
 
     public void deleteEvent(String id) throws Exception {
         User user = this.userService.getCurrentUser();
-        Optional<Event> event = this.eventRepository.findById(id);
+        Event event = this.getEventById(id);
 
-        event.ifPresent(e -> {
-            if (!user.getUserId().equals(e.getHost().getUserId())) {
-                try {
-                    throw new Exception("Cannot delete event if you're not the host");
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
+
+        if (!user.getUserId().equals(event.getHost().getUserId())) {
+            try {
+                throw new Exception("Cannot delete event if you're not the host");
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
             }
-            this.eventRepository.deleteById(id);
-        });
+        }
+        this.eventRepository.deleteById(id);
+
 
     }
 }
