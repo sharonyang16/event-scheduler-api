@@ -172,6 +172,11 @@ public class EventService {
 
     public EventResponse partialUpdate(String id, EventRequest request) throws Exception {
         Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        User user = this.userService.getCurrentUser();
+
+        if (!user.getUserId().equals(event.getHost().getUserId())) {
+            throw new Exception("Cannot update event if you're not the host.");
+        }
 
         if (this.isEventNameValid(request.getName())) {
             event.setName(request.getName());
@@ -216,9 +221,14 @@ public class EventService {
         Optional<Event> event = this.eventRepository.findById(id);
 
         event.ifPresent(e -> {
-            if (user.getUserId().equals(e.getHost().getUserId())) {
-                this.eventRepository.deleteById(id);
+            if (!user.getUserId().equals(e.getHost().getUserId())) {
+                try {
+                    throw new Exception("Cannot delete event if you're not the host");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
             }
+            this.eventRepository.deleteById(id);
         });
 
     }
