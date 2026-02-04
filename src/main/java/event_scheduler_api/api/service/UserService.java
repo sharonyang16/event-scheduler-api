@@ -31,6 +31,14 @@ public class UserService {
                 .build();
     }
 
+    public UserSummaryResponse userToUserSummaryResponse(User user) {
+        return UserSummaryResponse.builder()
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .build();
+    }
+
     public void addFriend(User user, User friendToAdd) throws Exception {
         user.addFriend(friendToAdd);
         this.userRepository.save(user);

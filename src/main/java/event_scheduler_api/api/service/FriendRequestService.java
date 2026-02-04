@@ -21,7 +21,11 @@ public class FriendRequestService {
     @Autowired
     private FriendRequestRepository friendRequestRepository;
 
-    @Autowired UserService userService;
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    FriendshipService friendshipService;
 
     public FriendRequestResponse friendRequestToResponse(FriendRequest friendRequest) {
         User sender = friendRequest.getSender();
@@ -41,23 +45,9 @@ public class FriendRequestService {
                 .build();
     }
 
-    public FriendRequest getFriendRequestById(String id) throws Exception{
+    public FriendRequest getFriendRequestById(String id) throws Exception {
         return this.friendRequestRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("Friend request with id " + id + " not found."));
-    }
-
-    public void acceptFriendRequestById(String id) throws Exception {
-        FriendRequest friendRequest = this.getFriendRequestById(id);
-        User user = this.userService.getCurrentUser();
-
-        if (!user.equals(friendRequest.getReceiver())) {
-            throw new Exception("You cannot accept this friend request!");
-        }
-
-        friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
-        this.friendRequestRepository.save(friendRequest);
-
-
     }
 
     public FriendRequest createFriendRequest(CreateFriendRequestRequest request) throws Exception {
@@ -74,6 +64,10 @@ public class FriendRequestService {
 
         if (this.friendRequestRepository.findFriendRequestBySenderAndReceiver(receiver, sender).isPresent()) {
             throw new Exception("This user has sent a friend request to you!");
+        }
+
+        if (this.friendshipService.areFriends(sender, receiver)) {
+            throw new Exception("You're already friends with this user!");
         }
 
         FriendRequest friendRequest = new FriendRequest();
@@ -106,5 +100,19 @@ public class FriendRequestService {
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
                 .map(friendRequest -> this.userService.userToUserSummaryResponse(friendRequest.getReceiver()))
                 .toList();
+    }
+
+    public void acceptFriendRequestById(String id) throws Exception {
+        FriendRequest friendRequest = this.getFriendRequestById(id);
+        User user = this.userService.getCurrentUser();
+
+        if (!user.equals(friendRequest.getReceiver())) {
+            throw new Exception("You cannot accept this friend request!");
+        }
+
+        friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
+        this.friendRequestRepository.save(friendRequest);
+
+        this.friendshipService.createFriendship(user, friendRequest.getSender());
     }
 }

@@ -51,12 +51,18 @@ public class FriendRequestController {
         }
     }
 
-    /*
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<?> acceptRequest() {
 
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<?> acceptRequest(@PathVariable String id) {
+        try {
+             this.friendRequestService.acceptFriendRequestById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("message", "Friend request accepted."));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
     }
 
+    /*
     @PostMapping("/{id}/reject")
     public ResponseEntity<?> rejectRequest() {
 
