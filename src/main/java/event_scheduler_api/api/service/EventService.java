@@ -29,7 +29,8 @@ public class EventService {
     private UserService userService;
 
     public Event getEventById(String id) throws Exception {
-        return this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event with id " + id + " not found!"));
+        return this.eventRepository.findById(id)
+                .orElseThrow(() -> new Exception("Event with id " + id + " not found."));
     }
 
     private EventResponse eventToResponse(Event event) {
