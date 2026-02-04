@@ -48,6 +48,10 @@ public class User {
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participatingEvents = new ArrayList<>();
 
+    @ManyToMany
+    @Getter(AccessLevel.NONE)
+    private List<User> friends = new ArrayList<>();
+
     @CreatedDate
     @Column(name = "time_joined", nullable = false, updatable = false)
     private Instant timeJoined;
@@ -59,4 +63,24 @@ public class User {
     public List<EventParticipant> getParticipatingEvents() {
         return new ArrayList<>(this.participatingEvents);
     }
+
+    public List<User> getFriends() {
+        return new ArrayList<>(this.friends);
+    }
+
+    public void addFriend(User u) {
+        if (this.friends.contains(u)) {
+            this.friends.add(u);
+            u.addFriend(this);
+        }
+
+    }
+
+    public void removeFriend(User u) {
+        if (this.friends.contains(u)) {
+            this.friends.remove(u);
+            u.removeFriend(this);
+        }
+    }
+
 }
