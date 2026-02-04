@@ -29,13 +29,13 @@ public class EventService {
     private UserService userService;
 
     public Event getEventById(String id) throws Exception {
-        return this.eventRepository.findById(id)
+        return this.eventRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("Event with id " + id + " not found."));
     }
 
     private EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
-                .eventId(event.getEventId())
+                .eventId(event.getId().toString())
                 .name(event.getName())
                 .host(UserContactResponse.builder()
                         .email(event.getHost().getEmail())
@@ -175,7 +175,7 @@ public class EventService {
         Event event = this.getEventById(id);
         User user = this.userService.getCurrentUser();
 
-        if (!user.getUserId().equals(event.getHost().getUserId())) {
+        if (!user.equals(event.getHost())) {
             throw new Exception("Cannot update event if you're not the host.");
         }
 
@@ -221,14 +221,10 @@ public class EventService {
         Event event = this.getEventById(id);
 
 
-        if (!user.getUserId().equals(event.getHost().getUserId())) {
-            try {
-                throw new Exception("Cannot delete event if you're not the host");
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
+        if (!user.equals(event.getHost())) {
+            throw new Exception("Cannot delete event if you're not the host.");
         }
-        this.eventRepository.deleteById(id);
+        this.eventRepository.deleteById(UUID.fromString(id));
 
 
     }

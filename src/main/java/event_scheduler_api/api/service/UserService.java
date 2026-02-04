@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,7 +19,7 @@ public class UserService {
 
     private UserResponse userToResponse(User user) {
         return UserResponse.builder()
-                .userId(user.getUserId())
+                .userId(user.getId().toString())
                 .email(user.getEmail())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
@@ -28,7 +29,7 @@ public class UserService {
     }
 
     public User getUserById(String id) throws Exception {
-        return this.userRepository.findById(id)
+        return this.userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("User with id " + id + " not found."));
     }
 

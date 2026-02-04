@@ -3,10 +3,7 @@ package event_scheduler_api.api.model;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -20,17 +17,13 @@ import java.util.List;
 @Data
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "event")
+@EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "eventId"
+        property = "id"
 )
-public class Event {
-    @Id
-    @Column(name = "event_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private String eventId;
-
+@Table(name = "event")
+public class Event extends BaseEntity {
     @Column(nullable = false)
     private String name;
 
