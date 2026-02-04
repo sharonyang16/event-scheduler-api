@@ -28,7 +28,7 @@ public class UserService {
     }
 
     public User getUserById(String userId) throws Exception {
-        return this.userRepository.findByUserId(userId).orElseThrow(() -> new Exception("User not found"));
+        return this.userRepository.findById(userId).orElseThrow(() -> new Exception("User not found"));
     }
 
     public User getUserByEmail(String email) throws Exception {
