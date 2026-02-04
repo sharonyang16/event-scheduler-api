@@ -12,7 +12,6 @@ import java.time.Instant;
 
 @Data
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 @Table(name = "event_participant")
 public class EventParticipant extends BaseEntity {
@@ -27,13 +26,4 @@ public class EventParticipant extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EventParticipationStatus status;
-
-    @CreatedDate
-    @Column(name = "time_created", nullable = false, updatable = false)
-    private Instant timeCreated;
-
-    @LastModifiedDate
-    @Column(name = "time_updated", nullable = false)
-    private Instant timeUpdated;
-
 }

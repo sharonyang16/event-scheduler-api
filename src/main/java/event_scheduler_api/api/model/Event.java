@@ -16,7 +16,6 @@ import java.util.List;
 
 @Data
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -42,14 +41,6 @@ public class Event extends BaseEntity {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participants = new ArrayList<>();
-
-    @CreatedDate
-    @Column(name = "time_created", nullable = false, updatable = false)
-    private Instant timeCreated;
-
-    @LastModifiedDate
-    @Column(name = "time_updated", nullable = false)
-    private Instant timeUpdated;
 
     public void setTime(ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
         if (startTime.isAfter(endTime)) {
