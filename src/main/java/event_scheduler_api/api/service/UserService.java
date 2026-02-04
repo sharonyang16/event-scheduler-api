@@ -44,7 +44,7 @@ public class UserService {
         if (auth == null) throw new Exception("An auth error has occurred.");
         String email = auth.getName();
 
-        User user = this.userRepository.findByEmail(email).orElseThrow(() -> new Exception("User not found"));
+        User user = getCurrentUser();
 
         return UserResponse.builder()
                 .userId(user.getUserId())
@@ -54,5 +54,13 @@ public class UserService {
                 .hostingEvents(user.getHostingEvents())
                 .participatingEvents(user.getParticipatingEvents())
                 .build();
+    }
+
+    public User getCurrentUser() throws Exception {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) throw new Exception("An error has occurred.");
+        String email = auth.getName();
+
+        return this.userRepository.findByEmail(email).orElseThrow(() -> new Exception("User not found"));
     }
 }
