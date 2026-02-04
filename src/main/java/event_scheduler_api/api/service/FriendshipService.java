@@ -52,4 +52,15 @@ public class FriendshipService {
         return friends.stream().map(friend -> this.userService.userToUserSummaryResponse(friend)).toList();
     }
 
+    public void deleteFriendshipById(String id) throws Exception{
+        User user = this.userService.getCurrentUser();
+        Friendship friendship = this.getFriendshipById(id);
+
+        if (!(user.equals(friendship.getUser1()) || user.equals(friendship.getUser2()))) {
+            throw new Exception("You cannot remove this friendship!");
+        }
+
+        this.friendshipRepository.deleteById(UUID.fromString(id));
+    }
+
 }
