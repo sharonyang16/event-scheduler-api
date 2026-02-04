@@ -52,6 +52,13 @@ public class FriendshipService {
         return friends.stream().map(friend -> this.userService.userToUserSummaryResponse(friend)).toList();
     }
 
+    public boolean checkFriendship(String id) throws Exception {
+        User user1 = this.userService.getCurrentUser();
+        User user2 = this.userService.getUserById(id);
+
+        return this.areFriends(user1, user2);
+    }
+
     public void deleteFriendshipById(String id) throws Exception{
         User user = this.userService.getCurrentUser();
         Friendship friendship = this.getFriendshipById(id);

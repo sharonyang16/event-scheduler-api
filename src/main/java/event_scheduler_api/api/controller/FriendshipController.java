@@ -16,11 +16,22 @@ public class FriendshipController {
 
     @Autowired
     private FriendshipService friendshipService;
+
     @GetMapping("/")
     public ResponseEntity<?> fetchMyFriends() {
         try {
             List<UserSummaryResponse> friends = this.friendshipService.getMyFriends();
             return ResponseEntity.status(HttpStatus.OK).body(friends);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/check/{userId}")
+    public ResponseEntity<?> checkFriendship(@PathVariable String userId) {
+        try {
+            boolean areFriends = this.friendshipService.checkFriendship(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of("areFriends", areFriends));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
