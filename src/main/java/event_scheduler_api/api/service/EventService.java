@@ -29,6 +29,9 @@ public class EventService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
+
     private EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
                 .eventId(event.getEventId())
@@ -151,8 +154,7 @@ public class EventService {
         if (!isEventNameValid(request.getName())) {
             throw new Exception("Event name cannot be blank!");
         }
-        User user = this.userRepository.findByUserId(request.getHost()).orElseThrow(
-                () -> new Exception("User does not exist!"));
+        User user = this.userService.getCurrentUser();
 
         Event event = new Event();
         event.setName(request.getName());
@@ -170,6 +172,11 @@ public class EventService {
 
     public EventResponse partialUpdate(String id, EventRequest request) throws Exception {
         Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        User user = this.userService.getCurrentUser();
+
+        if (!user.getUserId().equals(event.getHost().getUserId())) {
+            throw new Exception("Cannot update event if you're not the host.");
+        }
 
         if (this.isEventNameValid(request.getName())) {
             event.setName(request.getName());
@@ -209,7 +216,20 @@ public class EventService {
         return this.eventToResponse(event);
     }
 
-    public void deleteEvent(String id) {
-        this.eventRepository.deleteById(id);
+    public void deleteEvent(String id) throws Exception {
+        User user = this.userService.getCurrentUser();
+        Optional<Event> event = this.eventRepository.findById(id);
+
+        event.ifPresent(e -> {
+            if (!user.getUserId().equals(e.getHost().getUserId())) {
+                try {
+                    throw new Exception("Cannot delete event if you're not the host");
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+            this.eventRepository.deleteById(id);
+        });
+
     }
 }
