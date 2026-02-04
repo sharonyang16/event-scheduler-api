@@ -39,11 +39,6 @@ public class UserService {
                 .build();
     }
 
-    public void addFriend(User user, User friendToAdd) throws Exception {
-        user.addFriend(friendToAdd);
-        this.userRepository.save(user);
-    }
-
     public User getUserById(String id) throws Exception {
         return this.userRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("User with id " + id + " not found."));

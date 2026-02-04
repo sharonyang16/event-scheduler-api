@@ -47,20 +47,4 @@ public class User extends BaseEntity {
     public List<EventParticipant> getParticipatingEvents() {
         return new ArrayList<>(this.participatingEvents);
     }
-
-    public List<User> getFriends() {
-        return new ArrayList<>(this.friends);
-    }
-
-    public void addFriend(User u) {
-        if (!this.friends.contains(u)) {
-            this.friends.add(u);
-        }
-
-    }
-
-    public void removeFriend(User u) {
-        this.friends.remove(u);
-    }
-
 }
