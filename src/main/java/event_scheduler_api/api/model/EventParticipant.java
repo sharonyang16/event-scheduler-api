@@ -17,7 +17,7 @@ import java.time.Instant;
 @Table(name = "event_participant")
 public class EventParticipant extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
     @ManyToOne(fetch = FetchType.LAZY)
