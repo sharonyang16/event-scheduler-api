@@ -13,6 +13,6 @@ public class EventParticipantResponse {
     String firstName;
     String lastName;
     EventParticipationStatus status;
-    Instant timeCreated;
-    Instant timeUpdated;
+    Instant createdAt;
+    Instant updatedAt;
 }

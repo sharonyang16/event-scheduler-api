@@ -5,6 +5,7 @@ import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.User;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @Value
@@ -16,5 +17,6 @@ public class UserResponse {
     String lastName;
     List<Event> hostingEvents;
     List<EventParticipant> participatingEvents;
-    List<User> friends;
+    Instant createdAt;
+    Instant updatedAt;
 }

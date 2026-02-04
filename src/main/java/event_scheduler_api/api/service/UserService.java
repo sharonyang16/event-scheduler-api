@@ -26,15 +26,8 @@ public class UserService {
                 .lastName(user.getLastName())
                 .hostingEvents(user.getHostingEvents())
                 .participatingEvents(user.getParticipatingEvents())
-                .friends(user.getFriends())
-                .build();
-    }
-
-    public UserSummaryResponse userToUserSummaryResponse(User user) {
-        return UserSummaryResponse.builder()
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 

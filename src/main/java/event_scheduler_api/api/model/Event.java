@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
@@ -16,7 +13,6 @@ import java.util.List;
 
 @Data
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -42,14 +38,6 @@ public class Event extends BaseEntity {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participants = new ArrayList<>();
-
-    @CreatedDate
-    @Column(name = "time_created", nullable = false, updatable = false)
-    private Instant timeCreated;
-
-    @LastModifiedDate
-    @Column(name = "time_updated", nullable = false)
-    private Instant timeUpdated;
 
     public void setTime(ZonedDateTime startTime, ZonedDateTime endTime) throws Exception {
         if (startTime.isAfter(endTime)) {

@@ -7,23 +7,19 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
 @Table(name = "users")
-public class User extends  BaseEntity{
+public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
@@ -43,14 +39,6 @@ public class User extends  BaseEntity{
     @OneToMany(mappedBy = "user")
     @Getter(AccessLevel.NONE)
     private List<EventParticipant> participatingEvents = new ArrayList<>();
-
-    @ManyToMany
-    @Getter(AccessLevel.NONE)
-    private List<User> friends = new ArrayList<>();
-
-    @CreatedDate
-    @Column(name = "time_joined", nullable = false, updatable = false)
-    private Instant timeJoined;
 
     public List<Event> getHostingEvents() {
         return new ArrayList<>(this.hostingEvents);
