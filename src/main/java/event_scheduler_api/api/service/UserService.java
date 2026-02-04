@@ -25,6 +25,8 @@ public class UserService {
                 .lastName(user.getLastName())
                 .hostingEvents(user.getHostingEvents())
                 .participatingEvents(user.getParticipatingEvents())
+                .createdAt(user.getCreatedAt())
+                .updatedAt(user.getUpdatedAt())
                 .build();
     }
 

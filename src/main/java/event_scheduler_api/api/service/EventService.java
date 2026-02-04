@@ -52,12 +52,13 @@ public class EventService {
                                                 .firstName(eventParticipant.getUser().getFirstName())
                                                 .lastName(eventParticipant.getUser().getLastName())
                                                 .status(eventParticipant.getStatus())
-                                                .timeCreated(eventParticipant.getTimeCreated())
-                                                .timeUpdated(eventParticipant.getTimeUpdated())
+                                                .createdAt(eventParticipant.getCreatedAt())
+                                                .updatedAt(eventParticipant.getUpdatedAt())
                                                 .build())
                                 .collect(Collectors.toList())
                 )
-
+                .createdAt(event.getCreatedAt())
+                .updatedAt(event.getUpdatedAt())
                 .build();
     }
 
