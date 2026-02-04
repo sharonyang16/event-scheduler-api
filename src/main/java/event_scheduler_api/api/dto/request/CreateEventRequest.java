@@ -9,7 +9,6 @@ import java.util.List;
 @Data
 public class CreateEventRequest {
     private String name;
-    private String host; // Host's UUID
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
