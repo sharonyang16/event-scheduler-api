@@ -115,4 +115,27 @@ public class FriendRequestService {
 
         this.friendshipService.createFriendship(user, friendRequest.getSender());
     }
+
+    public void rejectFriendRequestById(String id) throws Exception {
+        FriendRequest friendRequest = this.getFriendRequestById(id);
+        User user = this.userService.getCurrentUser();
+
+        if (!user.equals(friendRequest.getReceiver())) {
+            throw new Exception("You cannot reject this friend request!");
+        }
+
+        friendRequest.setStatus(FriendRequestStatus.REJECTED);
+        this.friendRequestRepository.save(friendRequest);
+    }
+
+    public void deleteFriendRequestById(String id) throws Exception {
+        FriendRequest friendRequest = this.getFriendRequestById(id);
+        User user = this.userService.getCurrentUser();
+
+        if (!user.equals(friendRequest.getSender())) {
+            throw new Exception("You cannot delete this friend request!");
+        }
+
+        this.friendRequestRepository.deleteById(UUID.fromString(id));
+    }
 }
