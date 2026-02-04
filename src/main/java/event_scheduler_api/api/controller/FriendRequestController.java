@@ -27,6 +27,7 @@ public class FriendRequestController {
         }
     }
 
+    /*
     @GetMapping("/received")
     public ResponseEntity<?> fetchReceivedRequests() {
 
@@ -51,5 +52,5 @@ public class FriendRequestController {
     public ResponseEntity<?> deleteSentRequest() {
 
     }
-
+*/
 }

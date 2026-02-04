@@ -25,6 +25,7 @@ public class UserService {
                 .lastName(user.getLastName())
                 .hostingEvents(user.getHostingEvents())
                 .participatingEvents(user.getParticipatingEvents())
+                .friends(user.getFriends())
                 .build();
     }
 

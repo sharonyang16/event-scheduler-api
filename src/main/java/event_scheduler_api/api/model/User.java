@@ -20,7 +20,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "userId"
+        property = "id"
 )
 @Table(name = "users")
 public class User extends  BaseEntity{
