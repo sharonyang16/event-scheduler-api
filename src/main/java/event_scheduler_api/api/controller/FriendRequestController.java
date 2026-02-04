@@ -73,7 +73,7 @@ public class FriendRequestController {
         }
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteSentRequest(@PathVariable String id) {
         try {
             this.friendRequestService.deleteFriendRequestById(id);
