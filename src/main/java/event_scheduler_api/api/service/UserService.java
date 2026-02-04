@@ -1,6 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.UserResponse;
+import event_scheduler_api.api.dto.response.UserSummaryResponse;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,15 @@ public class UserService {
                 .participatingEvents(user.getParticipatingEvents())
                 .createdAt(user.getCreatedAt())
                 .updatedAt(user.getUpdatedAt())
+                .build();
+    }
+
+    public UserSummaryResponse userToUserSummaryResponse(User user) {
+        return UserSummaryResponse.builder()
+                .id(user.getId().toString())
+                .email(user.getEmail())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
                 .build();
     }
 
