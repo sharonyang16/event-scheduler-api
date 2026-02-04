@@ -6,7 +6,7 @@ import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.dto.response.UserContactResponse;
 import event_scheduler_api.api.model.Event;
-import event_scheduler_api.api.dto.request.EventRequest;
+import event_scheduler_api.api.dto.request.UpdateEventRequest;
 import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
 import event_scheduler_api.api.model.User;
@@ -167,7 +167,7 @@ public class EventService {
         return this.eventToResponse(event);
     }
 
-    public EventResponse partialUpdate(String id, EventRequest request) throws Exception {
+    public EventResponse partialUpdate(String id, UpdateEventRequest request) throws Exception {
         Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
         User user = this.userService.getCurrentUser();
 
@@ -198,7 +198,7 @@ public class EventService {
         }
 
         if (request.getHost() != null) {
-            User newHost = this.userService.getUserById(request.getHost());
+            User newHost = this.userService.getUserByEmail(request.getHost());
             event.setHost(newHost);
         }
 
