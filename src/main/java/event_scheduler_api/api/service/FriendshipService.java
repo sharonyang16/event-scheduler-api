@@ -1,17 +1,22 @@
 package event_scheduler_api.api.service;
 
+import event_scheduler_api.api.dto.response.UserSummaryResponse;
 import event_scheduler_api.api.model.Friendship;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.FriendshipRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class FriendshipService {
     @Autowired
     private FriendshipRepository friendshipRepository;
+
+    @Autowired
+    private UserService userService;
 
     public Friendship getFriendshipById(String id) throws Exception {
         return this.friendshipRepository.findById(UUID.fromString(id))
@@ -37,6 +42,14 @@ public class FriendshipService {
         friendship.setUser2(user2);
 
         this.friendshipRepository.save(friendship);
+    }
+
+    public List<UserSummaryResponse> getMyFriends() throws Exception {
+        User user = this.userService.getCurrentUser();
+
+        List<User> friends = this.friendshipRepository.findFriendsByUser(user);
+
+        return friends.stream().map(friend -> this.userService.userToUserSummaryResponse(friend)).toList();
     }
 
 }
