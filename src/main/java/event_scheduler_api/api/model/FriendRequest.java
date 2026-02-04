@@ -25,12 +25,4 @@ public class FriendRequest extends BaseEntity {
     @Column(nullable = false)
     private FriendRequestStatus status;
 
-    @CreatedDate
-    @Column(name = "time_created", nullable = false, updatable = false)
-    private Instant timeCreated;
-
-    @LastModifiedDate
-    @Column(name = "time_updated", nullable = false)
-    private Instant timeUpdated;
-
 }

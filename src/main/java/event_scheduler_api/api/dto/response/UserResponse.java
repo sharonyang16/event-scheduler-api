@@ -2,7 +2,6 @@ package event_scheduler_api.api.dto.response;
 
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.EventParticipant;
-import event_scheduler_api.api.model.User;
 import lombok.*;
 
 import java.time.Instant;
