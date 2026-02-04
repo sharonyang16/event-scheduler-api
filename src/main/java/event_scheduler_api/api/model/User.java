@@ -7,10 +7,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +19,7 @@ import java.util.List;
         property = "id"
 )
 @Table(name = "users")
-public class User extends  BaseEntity{
+public class User extends BaseEntity {
     @Column(unique = true, nullable = false)
     private String email;
 
