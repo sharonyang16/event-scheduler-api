@@ -57,7 +57,8 @@ public class EventService {
                                                 .build())
                                 .collect(Collectors.toList())
                 )
-
+                .createdAt(event.getCreatedAt())
+                .updatedAt(event.getUpdatedAt())
                 .build();
     }
 
