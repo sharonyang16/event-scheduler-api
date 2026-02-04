@@ -3,7 +3,6 @@ package event_scheduler_api.api.service;
 import event_scheduler_api.api.dto.request.LoginRequest;
 import event_scheduler_api.api.dto.request.SignUpRequest;
 import event_scheduler_api.api.dto.response.AuthResponse;
-import event_scheduler_api.api.dto.response.UserResponse;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
 import event_scheduler_api.api.security.JwtUtil;
@@ -39,7 +38,6 @@ public class AuthService {
         user.setPassword(this.passwordEncoder.encode((request.getPassword())));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setTimeJoined(Instant.now());
 
         this.userRepository.save(user);
 
