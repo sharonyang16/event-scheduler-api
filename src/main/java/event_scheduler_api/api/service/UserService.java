@@ -16,36 +16,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<UserResponse> getAllUsers() {
-        List<User> allUsers = this.userRepository.findAll();
-
-        return allUsers.stream().map(
-                        user -> UserResponse.builder()
-                                .userId(user.getUserId())
-                                .email(user.getEmail())
-                                .firstName(user.getFirstName())
-                                .lastName(user.getLastName())
-                                .hostingEvents(user.getHostingEvents())
-                                .participatingEvents(user.getParticipatingEvents())
-                                .build())
-                .collect(Collectors.toList());
-    }
-
-    public void deleteUser() throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) throw new Exception("An auth error has occurred.");
-        String email = auth.getName();
-
-        this.userRepository.deleteByEmail(email);
-    }
-
-    public UserResponse getUser() throws Exception {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) throw new Exception("An auth error has occurred.");
-        String email = auth.getName();
-
-        User user = getCurrentUser();
-
+    private UserResponse userToResponse(User user) {
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .email(user.getEmail())
@@ -63,4 +34,27 @@ public class UserService {
 
         return this.userRepository.findByEmail(email).orElseThrow(() -> new Exception("User not found"));
     }
+
+    public List<UserResponse> getAllUsers() {
+        List<User> allUsers = this.userRepository.findAll();
+
+        return allUsers.stream().map(
+                        this::userToResponse)
+                .collect(Collectors.toList());
+    }
+
+
+    public void deleteUser() throws Exception {
+        User user = this.getCurrentUser();
+
+        this.userRepository.deleteByEmail(user.getEmail());
+    }
+
+    public UserResponse getUser() throws Exception {
+        User user = this.getCurrentUser();
+
+        return this.userToResponse(user);
+    }
+
+
 }
