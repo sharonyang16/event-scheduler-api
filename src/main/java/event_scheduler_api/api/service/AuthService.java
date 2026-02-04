@@ -30,7 +30,7 @@ public class AuthService {
 
     public AuthResponse createUser(SignUpRequest request) throws Exception {
         if (this.userRepository.existsByEmail(request.getEmail())) {
-            throw new Exception("Account with email already exists!");
+            throw new Exception("Account with email " + request.getEmail() + " already exists!");
         }
 
         User user = new User();
