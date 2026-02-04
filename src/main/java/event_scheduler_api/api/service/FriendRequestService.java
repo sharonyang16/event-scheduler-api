@@ -1,13 +1,20 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.request.CreateFriendRequestRequest;
+import event_scheduler_api.api.dto.response.FriendRequestResponse;
+import event_scheduler_api.api.dto.response.UserResponse;
+import event_scheduler_api.api.dto.response.UserSummaryResponse;
+import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.FriendRequest;
 import event_scheduler_api.api.model.FriendRequestStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.FriendRequestRepository;
-import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 public class FriendRequestService {
@@ -15,6 +22,43 @@ public class FriendRequestService {
     private FriendRequestRepository friendRequestRepository;
 
     @Autowired UserService userService;
+
+    public FriendRequestResponse friendRequestToResponse(FriendRequest friendRequest) {
+        User sender = friendRequest.getSender();
+        User receiver = friendRequest.getReceiver();
+        return FriendRequestResponse.builder()
+                .sender(UserSummaryResponse.builder()
+                        .email(sender.getEmail())
+                        .firstName(sender.getFirstName())
+                        .lastName(sender.getLastName())
+                        .build())
+                .receiver(UserSummaryResponse.builder()
+                        .email(receiver.getEmail())
+                        .firstName(receiver.getFirstName())
+                        .lastName(receiver.getLastName())
+                        .build())
+                .status(friendRequest.getStatus())
+                .build();
+    }
+
+    public FriendRequest getFriendRequestById(String id) throws Exception{
+        return this.friendRequestRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new Exception("Friend request with id " + id + " not found."));
+    }
+
+    public void acceptFriendRequestById(String id) throws Exception {
+        FriendRequest friendRequest = this.getFriendRequestById(id);
+        User user = this.userService.getCurrentUser();
+
+        if (!user.equals(friendRequest.getReceiver())) {
+            throw new Exception("You cannot accept this friend request!");
+        }
+
+        friendRequest.setStatus(FriendRequestStatus.ACCEPTED);
+        this.friendRequestRepository.save(friendRequest);
+
+
+    }
 
     public FriendRequest createFriendRequest(CreateFriendRequestRequest request) throws Exception {
         User sender = this.userService.getCurrentUser();
@@ -42,4 +86,25 @@ public class FriendRequestService {
         return friendRequest;
     }
 
+    public List<UserSummaryResponse> getMyReceived() throws Exception {
+        User user = this.userService.getCurrentUser();
+        List<FriendRequest> pendingRequests = this.friendRequestRepository.findFriendRequestsByReceiver(user)
+                .orElse(new ArrayList<>());
+
+        return pendingRequests.stream()
+                .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
+                .map(friendRequest -> this.userService.userToUserSummaryResponse(friendRequest.getSender()))
+                .toList();
+    }
+
+    public List<UserSummaryResponse> getMySent() throws Exception {
+        User user = this.userService.getCurrentUser();
+        List<FriendRequest> pendingRequests = this.friendRequestRepository.findFriendRequestsBySender(user)
+                .orElse(new ArrayList<>());
+
+        return pendingRequests.stream()
+                .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
+                .map(friendRequest -> this.userService.userToUserSummaryResponse(friendRequest.getReceiver()))
+                .toList();
+    }
 }

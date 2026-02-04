@@ -65,18 +65,14 @@ public class User extends  BaseEntity{
     }
 
     public void addFriend(User u) {
-        if (this.friends.contains(u)) {
+        if (!this.friends.contains(u)) {
             this.friends.add(u);
-            u.addFriend(this);
         }
 
     }
 
     public void removeFriend(User u) {
-        if (this.friends.contains(u)) {
-            this.friends.remove(u);
-            u.removeFriend(this);
-        }
+        this.friends.remove(u);
     }
 
 }
