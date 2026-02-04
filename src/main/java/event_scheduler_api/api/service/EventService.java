@@ -6,12 +6,11 @@ import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.dto.response.UserContactResponse;
 import event_scheduler_api.api.model.Event;
-import event_scheduler_api.api.dto.request.EventRequest;
+import event_scheduler_api.api.dto.request.UpdateEventRequest;
 import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
-import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,14 +26,16 @@ public class EventService {
     private EventRepository eventRepository;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private UserService userService;
+
+    public Event getEventById(String id) throws Exception {
+        return this.eventRepository.findById(UUID.fromString(id))
+                .orElseThrow(() -> new Exception("Event with id " + id + " not found."));
+    }
 
     private EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
-                .eventId(event.getEventId())
+                .eventId(event.getId().toString())
                 .name(event.getName())
                 .host(UserContactResponse.builder()
                         .email(event.getHost().getEmail())
@@ -65,31 +66,31 @@ public class EventService {
     }
 
     private void addParticipant(Event event, String email) {
-        if (!event.getHost().getEmail().equals(email)) {
-            Optional<User> user = this.userRepository.findByEmail(email);
 
-            user.ifPresent(u -> {
+        if (!event.getHost().getEmail().equals(email)) {
+            try {
+                User user = this.userService.getUserByEmail(email);
+
                 EventParticipant eventParticipant = new EventParticipant();
                 eventParticipant.setEvent(event);
-                eventParticipant.setUser(u);
+                eventParticipant.setUser(user);
                 eventParticipant.setStatus(EventParticipationStatus.PENDING);
 
                 event.addParticipant(eventParticipant);
-            });
+            } catch (Exception e) {
+                // do nothing for now
+            }
         }
     }
 
     private void removeParticipant(Event event, String email) {
-        Optional<User> user = this.userRepository.findByEmail(email);
+        Optional<EventParticipant> toRemove = event.getParticipants()
+                .stream()
+                .filter(p -> p.getUser().getEmail().equals(email))
+                .findFirst();
 
-        user.ifPresent(u -> {
-            Optional<EventParticipant> toRemove = event.getParticipants()
-                    .stream()
-                    .filter(p -> p.getUser().getEmail().equals(email))
-                    .findFirst();
+        toRemove.ifPresent(event::removeParticipant);
 
-            toRemove.ifPresent(event::removeParticipant);
-        });
     }
 
     private void updateParticipant(Event event, EventParticipantRequest request) {
@@ -145,7 +146,7 @@ public class EventService {
     }
 
     public EventResponse getEvent(String id) throws Exception {
-        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+        Event event = this.getEventById(id);
 
         return this.eventToResponse(event);
     }
@@ -170,11 +171,11 @@ public class EventService {
         return this.eventToResponse(event);
     }
 
-    public EventResponse partialUpdate(String id, EventRequest request) throws Exception {
-        Event event = this.eventRepository.findById(id).orElseThrow(() -> new Exception("Event not found!"));
+    public EventResponse partialUpdate(String id, UpdateEventRequest request) throws Exception {
+        Event event = this.getEventById(id);
         User user = this.userService.getCurrentUser();
 
-        if (!user.getUserId().equals(event.getHost().getUserId())) {
+        if (!user.equals(event.getHost())) {
             throw new Exception("Cannot update event if you're not the host.");
         }
 
@@ -201,9 +202,8 @@ public class EventService {
         }
 
         if (request.getHost() != null) {
-            User user = this.userRepository.findByUserId(request.getHost()).orElseThrow(
-                    () -> new Exception("User does not exist!"));
-            event.setHost(user);
+            User newHost = this.userService.getUserByEmail(request.getHost());
+            event.setHost(newHost);
         }
 
 
@@ -218,18 +218,14 @@ public class EventService {
 
     public void deleteEvent(String id) throws Exception {
         User user = this.userService.getCurrentUser();
-        Optional<Event> event = this.eventRepository.findById(id);
+        Event event = this.getEventById(id);
 
-        event.ifPresent(e -> {
-            if (!user.getUserId().equals(e.getHost().getUserId())) {
-                try {
-                    throw new Exception("Cannot delete event if you're not the host");
-                } catch (Exception ex) {
-                    throw new RuntimeException(ex);
-                }
-            }
-            this.eventRepository.deleteById(id);
-        });
+
+        if (!user.equals(event.getHost())) {
+            throw new Exception("Cannot delete event if you're not the host.");
+        }
+        this.eventRepository.deleteById(UUID.fromString(id));
+
 
     }
 }
