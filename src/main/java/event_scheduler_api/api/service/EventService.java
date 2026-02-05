@@ -33,7 +33,7 @@ public class EventService {
                 .orElseThrow(() -> new Exception("Event with id " + id + " not found."));
     }
 
-    private EventResponse eventToResponse(Event event) {
+    public EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
                 .eventId(event.getId().toString())
                 .name(event.getName())
