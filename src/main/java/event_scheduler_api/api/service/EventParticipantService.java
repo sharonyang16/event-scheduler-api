@@ -16,13 +16,13 @@ import java.util.UUID;
 @Service
 public class EventParticipantService {
     @Autowired
-    EventParticipantRepository eventParticipantRepository;
+    private EventParticipantRepository eventParticipantRepository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    EventService eventService;
+    private EventService eventService;
 
     private EventInviteResponse eventParticipantToInviteResponse(EventParticipant eventParticipant) {
         return EventInviteResponse.builder()

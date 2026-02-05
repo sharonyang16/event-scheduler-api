@@ -15,7 +15,7 @@ import java.util.Map;
 @RequestMapping("/api/event-invites")
 public class EventParticipantController {
     @Autowired
-    EventParticipantService eventParticipantService;
+    private EventParticipantService eventParticipantService;
 
     @GetMapping("/")
     public ResponseEntity<?> getMyInvites() {
