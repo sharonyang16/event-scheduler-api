@@ -1,5 +1,6 @@
 package event_scheduler_api.api.controller;
 
+import event_scheduler_api.api.dto.request.AddParticipantsToEventRequest;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
@@ -57,6 +58,28 @@ public class EventController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
+
+    @PostMapping("/{eventId}/participants")
+    public ResponseEntity<?> addParticipants(@PathVariable String eventId,
+                                             @RequestBody AddParticipantsToEventRequest request) {
+        try {
+            EventResponse event = this.eventService.addParticipants(eventId, request);
+            return ResponseEntity.status(HttpStatus.OK).body(event);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/{eventId}/participants/{inviteId}")
+    public ResponseEntity<?> deleteParticipant(@PathVariable String eventId, @PathVariable String inviteId) {
+        try {
+            EventResponse event = this.eventService.removeParticipant(eventId, inviteId);
+            return ResponseEntity.status(HttpStatus.OK).body(event);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
+        }
+    }
+
 
     @DeleteMapping("/{eventId}")
     public ResponseEntity<?> removeEvent(@PathVariable String eventId) {

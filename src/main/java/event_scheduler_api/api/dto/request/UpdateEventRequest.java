@@ -18,5 +18,4 @@ public class UpdateEventRequest {
     private LocalDateTime endTime;
 
     private String timezone;
-    private List<EventParticipantRequest> participants;
 }

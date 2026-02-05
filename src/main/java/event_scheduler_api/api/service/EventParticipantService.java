@@ -1,6 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.EventInviteResponse;
+import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
 import event_scheduler_api.api.model.User;
@@ -28,6 +29,19 @@ public class EventParticipantService {
                 .event(this.eventService.eventToResponse(eventParticipant.getEvent()))
                 .status(eventParticipant.getStatus())
                 .build();
+    }
+
+    public void createEventParticipant(String email, Event event) throws Exception {
+        EventParticipant eventParticipant = new EventParticipant();
+        eventParticipant.setEvent(event);
+        eventParticipant.setUser(this.userService.getUserByEmail(email));
+        eventParticipant.setStatus(EventParticipationStatus.PENDING);
+
+        this.eventParticipantRepository.save(eventParticipant);
+    }
+
+    public void deleteEventParticipantById(String id) {
+        this.eventParticipantRepository.deleteById(UUID.fromString(id));
     }
 
     public EventParticipant getEventParticipantById(String id) throws Exception {
