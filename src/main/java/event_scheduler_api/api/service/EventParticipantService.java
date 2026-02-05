@@ -61,11 +61,13 @@ public class EventParticipantService {
                 .orElseThrow(() -> new Exception("Event participant with id " + id + " not found."));
     }
 
-    public List<EventInviteResponse> getMyInvites() throws Exception {
+    public List<EventInviteResponse> getMyInvites(EventParticipationStatus status) throws Exception {
         User user = this.userService.getCurrentUser();
         List<EventParticipant> eventParticipants = this.eventParticipantRepository.getEventParticipantsByUser(user);
-
-        return eventParticipants.stream().map(this::eventParticipantToInviteResponse).toList();
+        
+        return eventParticipants.stream()
+                .filter(eventParticipant -> status == null || eventParticipant.getStatus().equals(status))
+                .map(this::eventParticipantToInviteResponse).toList();
     }
 
     public void updateEventParticipationStatusById(String id, EventParticipationStatus status) throws Exception {

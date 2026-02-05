@@ -18,9 +18,9 @@ public class EventParticipantController {
     private EventParticipantService eventParticipantService;
 
     @GetMapping("/")
-    public ResponseEntity<?> getMyInvites() {
+    public ResponseEntity<?> getMyInvites(@RequestParam(required = false) EventParticipationStatus status) {
         try {
-            List< EventInviteResponse> invites = this.eventParticipantService.getMyInvites();
+            List<EventInviteResponse> invites = this.eventParticipantService.getMyInvites(status);
             return ResponseEntity.status(HttpStatus.OK).body(invites);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
