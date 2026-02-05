@@ -2,7 +2,6 @@ package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.request.AddParticipantsToEventRequest;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
-import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.dto.response.UserContactResponse;
 import event_scheduler_api.api.dto.request.UpdateEventRequest;
