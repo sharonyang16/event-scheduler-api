@@ -2,13 +2,11 @@ package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.request.AddParticipantsToEventRequest;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
-import event_scheduler_api.api.dto.request.EventParticipantRequest;
 import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.dto.response.UserContactResponse;
-import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.UpdateEventRequest;
-import event_scheduler_api.api.model.EventParticipant;
+import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,14 +48,7 @@ public class EventService {
                 .timezone(event.getStartTime().getZone().getDisplayName(TextStyle.SHORT, Locale.US))
                 .participants(
                         event.getParticipants().stream().map(
-                                        eventParticipant -> EventParticipantResponse.builder()
-                                                .email(eventParticipant.getUser().getEmail())
-                                                .firstName(eventParticipant.getUser().getFirstName())
-                                                .lastName(eventParticipant.getUser().getLastName())
-                                                .status(eventParticipant.getStatus())
-                                                .createdAt(eventParticipant.getCreatedAt())
-                                                .updatedAt(eventParticipant.getUpdatedAt())
-                                                .build())
+                                        eventParticipant -> this.eventParticipantService.eventParticipantToResponse(eventParticipant))
                                 .collect(Collectors.toList())
                 )
                 .createdAt(event.getCreatedAt())
@@ -98,7 +89,7 @@ public class EventService {
         request.getParticipants().forEach(
                 email -> {
                     try {
-                        this.eventParticipantService.createEventParticipant(email, event)
+                        this.eventParticipantService.createEventParticipant(email, event);
                     } catch (Exception e) {
                         // do nothing
                     }

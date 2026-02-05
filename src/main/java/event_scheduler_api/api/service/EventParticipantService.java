@@ -1,6 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.EventInviteResponse;
+import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
@@ -28,6 +29,17 @@ public class EventParticipantService {
                 .inviteId(eventParticipant.getId().toString())
                 .event(this.eventService.eventToResponse(eventParticipant.getEvent()))
                 .status(eventParticipant.getStatus())
+                .build();
+    }
+
+    public EventParticipantResponse eventParticipantToResponse(EventParticipant eventParticipant) {
+        return EventParticipantResponse.builder()
+                .email(eventParticipant.getUser().getEmail())
+                .firstName(eventParticipant.getUser().getFirstName())
+                .lastName(eventParticipant.getUser().getLastName())
+                .status(eventParticipant.getStatus())
+                .createdAt(eventParticipant.getCreatedAt())
+                .updatedAt(eventParticipant.getUpdatedAt())
                 .build();
     }
 
