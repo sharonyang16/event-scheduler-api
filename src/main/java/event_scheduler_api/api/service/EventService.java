@@ -1,14 +1,11 @@
 package event_scheduler_api.api.service;
 
+import event_scheduler_api.api.dto.request.AddParticipantsToEventRequest;
 import event_scheduler_api.api.dto.request.CreateEventRequest;
-import event_scheduler_api.api.dto.request.EventParticipantRequest;
-import event_scheduler_api.api.dto.response.EventParticipantResponse;
 import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.dto.response.UserContactResponse;
-import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.dto.request.UpdateEventRequest;
-import event_scheduler_api.api.model.EventParticipant;
-import event_scheduler_api.api.model.EventParticipationStatus;
+import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +25,15 @@ public class EventService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private EventParticipantService eventParticipantService;
+
     public Event getEventById(String id) throws Exception {
         return this.eventRepository.findById(UUID.fromString(id))
                 .orElseThrow(() -> new Exception("Event with id " + id + " not found."));
     }
 
-    private EventResponse eventToResponse(Event event) {
+    public EventResponse eventToResponse(Event event) {
         return EventResponse.builder()
                 .eventId(event.getId().toString())
                 .name(event.getName())
@@ -47,14 +47,7 @@ public class EventService {
                 .timezone(event.getStartTime().getZone().getDisplayName(TextStyle.SHORT, Locale.US))
                 .participants(
                         event.getParticipants().stream().map(
-                                        eventParticipant -> EventParticipantResponse.builder()
-                                                .email(eventParticipant.getUser().getEmail())
-                                                .firstName(eventParticipant.getUser().getFirstName())
-                                                .lastName(eventParticipant.getUser().getLastName())
-                                                .status(eventParticipant.getStatus())
-                                                .createdAt(eventParticipant.getCreatedAt())
-                                                .updatedAt(eventParticipant.getUpdatedAt())
-                                                .build())
+                                        eventParticipant -> this.eventParticipantService.eventParticipantToResponse(eventParticipant))
                                 .collect(Collectors.toList())
                 )
                 .createdAt(event.getCreatedAt())
@@ -64,80 +57,6 @@ public class EventService {
 
     private boolean isEventNameValid(String name) {
         return name != null && !name.isEmpty();
-    }
-
-    private void addParticipant(Event event, String email) {
-
-        if (!event.getHost().getEmail().equals(email)) {
-            try {
-                User user = this.userService.getUserByEmail(email);
-
-                EventParticipant eventParticipant = new EventParticipant();
-                eventParticipant.setEvent(event);
-                eventParticipant.setUser(user);
-                eventParticipant.setStatus(EventParticipationStatus.PENDING);
-
-                event.addParticipant(eventParticipant);
-            } catch (Exception e) {
-                // do nothing for now
-            }
-        }
-    }
-
-    private void removeParticipant(Event event, String email) {
-        Optional<EventParticipant> toRemove = event.getParticipants()
-                .stream()
-                .filter(p -> p.getUser().getEmail().equals(email))
-                .findFirst();
-
-        toRemove.ifPresent(event::removeParticipant);
-
-    }
-
-    private void updateParticipant(Event event, EventParticipantRequest request) {
-        Optional<EventParticipant> eventParticipant = event.getParticipants()
-                .stream()
-                .filter(p -> p.getUser().getEmail().equals(request.getEmail()))
-                .findFirst();
-
-        eventParticipant.ifPresent(ep -> {
-            if (!ep.getStatus().equals(request.getStatus())) {
-                ep.setStatus(request.getStatus());
-            }
-        });
-
-    }
-
-    private void updateParticipants(Event event, List<EventParticipantRequest> newParticipants) {
-        Set<String> oldEmails = event.getParticipants()
-                .stream()
-                .map(participant -> participant.getUser().getEmail())
-                .collect(Collectors.toSet());
-
-        Set<String> newEmails = newParticipants
-                .stream()
-                .map(EventParticipantRequest::getEmail)
-                .collect(Collectors.toSet());
-
-        Set<String> removedEmails = new HashSet<>(oldEmails);
-        removedEmails.removeAll(newEmails);
-
-        Set<String> addedEmails = new HashSet<>(newEmails);
-        addedEmails.removeAll(oldEmails);
-
-        Set<String> updatedUserEmails = new HashSet<>(oldEmails);
-        updatedUserEmails.retainAll(newEmails);
-
-        List<EventParticipantRequest> updatedUserParticipants = newParticipants
-                .stream()
-                .filter(request -> updatedUserEmails.contains(request.getEmail()))
-                .toList();
-
-        removedEmails.forEach(email -> this.removeParticipant(event, email));
-
-        addedEmails.forEach(email -> this.addParticipant(event, email));
-
-        updatedUserParticipants.forEach(eventParticipantRequest -> this.updateParticipant(event, eventParticipantRequest));
     }
 
     public List<EventResponse> getAllEvents() throws Exception {
@@ -167,7 +86,13 @@ public class EventService {
         this.eventRepository.save(event);
 
         request.getParticipants().forEach(
-                email -> this.addParticipant(event, email));
+                email -> {
+                    try {
+                        this.eventParticipantService.createEventParticipant(email, event);
+                    } catch (Exception e) {
+                        // do nothing
+                    }
+                });
 
         return this.eventToResponse(event);
     }
@@ -207,11 +132,6 @@ public class EventService {
             event.setHost(newHost);
         }
 
-
-        if (request.getParticipants() != null) {
-            this.updateParticipants(event, request.getParticipants());
-        }
-
         this.eventRepository.save(event);
 
         return this.eventToResponse(event);
@@ -221,12 +141,31 @@ public class EventService {
         User user = this.userService.getCurrentUser();
         Event event = this.getEventById(id);
 
-
         if (!user.equals(event.getHost())) {
             throw new Exception("Cannot delete event if you're not the host.");
         }
         this.eventRepository.deleteById(UUID.fromString(id));
+    }
 
+    public EventResponse addParticipants(String id, AddParticipantsToEventRequest request) throws Exception {
+        Event event = this.getEventById(id);
+        List<String> emails = request.getEmails();
 
+        emails.forEach(email -> {
+            try {
+                this.eventParticipantService.createEventParticipant(email, event);
+            } catch (Exception e) {
+                // do nothing
+            }
+        });
+
+        return this.eventToResponse(event);
+    }
+
+    public EventResponse removeParticipant(String eventId, String inviteId) throws Exception {
+        Event event = this.getEventById(eventId);
+        this.eventParticipantService.deleteEventParticipantById(inviteId);
+
+        return this.eventToResponse(event);
     }
 }
