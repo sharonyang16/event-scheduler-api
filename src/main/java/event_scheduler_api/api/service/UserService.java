@@ -1,7 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.UserResponse;
-import event_scheduler_api.api.dto.response.UserSummaryResponse;
+import event_scheduler_api.api.mapper.UserMapper;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,27 +18,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    private UserResponse userToResponse(User user) {
-        return UserResponse.builder()
-                .userId(user.getId().toString())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .hostingEvents(user.getHostingEvents())
-                .participatingEvents(user.getParticipatingEvents())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(user.getUpdatedAt())
-                .build();
-    }
-
-    public UserSummaryResponse userToUserSummaryResponse(User user) {
-        return UserSummaryResponse.builder()
-                .id(user.getId().toString())
-                .email(user.getEmail())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .build();
-    }
+    @Autowired
+    private UserMapper userMapper;
 
     public User getUserById(String id) throws Exception {
         return this.userRepository.findById(UUID.fromString(id))
@@ -62,7 +43,7 @@ public class UserService {
         List<User> allUsers = this.userRepository.findAll();
 
         return allUsers.stream().map(
-                        this::userToResponse)
+                        user -> this.userMapper.toUserResponse(user))
                 .collect(Collectors.toList());
     }
 
@@ -76,7 +57,7 @@ public class UserService {
     public UserResponse getUser() throws Exception {
         User user = this.getCurrentUser();
 
-        return this.userToResponse(user);
+        return this.userMapper.toUserResponse(user);
     }
 
 
