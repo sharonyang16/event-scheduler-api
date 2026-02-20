@@ -6,7 +6,6 @@ import event_scheduler_api.api.dto.response.EventResponse;
 import event_scheduler_api.api.service.EventService;
 import event_scheduler_api.api.dto.request.UpdateEventRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

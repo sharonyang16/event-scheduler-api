@@ -3,7 +3,6 @@ package event_scheduler_api.api.controller;
 import event_scheduler_api.api.dto.response.UserResponse;
 import event_scheduler_api.api.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

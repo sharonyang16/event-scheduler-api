@@ -9,7 +9,6 @@ import event_scheduler_api.api.model.FriendRequestStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.FriendRequestRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,10 +18,10 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class FriendRequestService {
-    private FriendRequestRepository friendRequestRepository;
-    private UserService userService;
-    private FriendshipService friendshipService;
-    private FriendshipMapper friendshipMapper;
+    private final FriendRequestRepository friendRequestRepository;
+    private final UserService userService;
+    private final FriendshipService friendshipService;
+    private final FriendshipMapper friendshipMapper;
 
     private FriendRequest getFriendRequestById(String id) throws Exception {
         return this.friendRequestRepository.findById(UUID.fromString(id))
