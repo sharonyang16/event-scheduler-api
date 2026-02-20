@@ -1,7 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.FriendshipResponse;
-import event_scheduler_api.api.dto.response.UserSummaryResponse;
+import event_scheduler_api.api.mapper.FriendshipMapper;
 import event_scheduler_api.api.model.Friendship;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.FriendshipRepository;
@@ -18,6 +18,9 @@ public class FriendshipService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FriendshipMapper friendshipMapper;
 
     public Friendship getFriendshipById(String id) throws Exception {
         return this.friendshipRepository.findById(UUID.fromString(id))
@@ -52,10 +55,7 @@ public class FriendshipService {
 
         return friendships.stream().map(friendship -> {
             User friend = friendship.getUser1().equals(user) ? friendship.getUser2() : friendship.getUser1();
-            return FriendshipResponse.builder()
-                    .id(friendship.getId().toString())
-                    .friend(this.userService.userToUserSummaryResponse(friend))
-                    .build();
+            return this.friendshipMapper.toFriendshipResponse(friendship, friend);
         }).toList();
     }
 

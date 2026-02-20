@@ -3,7 +3,7 @@ package event_scheduler_api.api.service;
 import event_scheduler_api.api.dto.request.CreateFriendRequestRequest;
 import event_scheduler_api.api.dto.response.ReceivedFriendRequestResponse;
 import event_scheduler_api.api.dto.response.SentFriendRequestResponse;
-import event_scheduler_api.api.dto.response.UserSummaryResponse;
+import event_scheduler_api.api.mapper.FriendshipMapper;
 import event_scheduler_api.api.model.FriendRequest;
 import event_scheduler_api.api.model.FriendRequestStatus;
 import event_scheduler_api.api.model.User;
@@ -21,10 +21,13 @@ public class FriendRequestService {
     private FriendRequestRepository friendRequestRepository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    FriendshipService friendshipService;
+    private FriendshipService friendshipService;
+
+    @Autowired
+    private FriendshipMapper friendshipMapper;
 
     private FriendRequest getFriendRequestById(String id) throws Exception {
         return this.friendRequestRepository.findById(UUID.fromString(id))
@@ -67,10 +70,7 @@ public class FriendRequestService {
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
                 .map(friendRequest ->
-                        ReceivedFriendRequestResponse.builder()
-                                .requestId(friendRequest.getId().toString())
-                                .sender(this.userService.userToUserSummaryResponse(friendRequest.getSender()))
-                                .build())
+                        this.friendshipMapper.toReceivedFriendRequestResponse(friendRequest))
                 .toList();
     }
 
@@ -82,10 +82,7 @@ public class FriendRequestService {
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
                 .map(friendRequest ->
-                        SentFriendRequestResponse.builder()
-                                .requestId(friendRequest.getId().toString())
-                                .receiver(this.userService.userToUserSummaryResponse(friendRequest.getReceiver()))
-                                .build())
+                        this.friendshipMapper.toSentFriendRequestResponse(friendRequest))
                 .toList();
     }
 
