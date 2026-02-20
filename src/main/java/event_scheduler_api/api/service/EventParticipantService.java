@@ -45,7 +45,7 @@ public class EventParticipantService {
     public List<EventInviteResponse> getMyInvites(EventParticipationStatus status) throws Exception {
         User user = this.userService.getCurrentUser();
         List<EventParticipant> eventParticipants = this.eventParticipantRepository.getEventParticipantsByUser(user);
-        
+
         return eventParticipants.stream()
                 .filter(eventParticipant -> status == null || eventParticipant.getStatus().equals(status))
                 .map(eventParticipant -> this.eventMapper.toEventInviteResponse(eventParticipant)).toList();

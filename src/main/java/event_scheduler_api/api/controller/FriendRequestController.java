@@ -5,6 +5,7 @@ import event_scheduler_api.api.dto.response.ReceivedFriendRequestResponse;
 import event_scheduler_api.api.dto.response.SentFriendRequestResponse;
 
 import event_scheduler_api.api.service.FriendRequestService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +16,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friend-requests")
+@RequiredArgsConstructor
 public class FriendRequestController {
-    @Autowired
-    private FriendRequestService friendRequestService;
-
+    private final FriendRequestService friendRequestService;
 
     @PostMapping("/")
     public ResponseEntity<?> createFriendRequest(@RequestBody CreateFriendRequestRequest request) {
@@ -30,7 +30,6 @@ public class FriendRequestController {
         }
     }
 
-
     @GetMapping("/received")
     public ResponseEntity<?> fetchReceivedRequests() {
         try {
@@ -40,7 +39,6 @@ public class FriendRequestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
-
 
     @GetMapping("/sent")
     public ResponseEntity<?> fetchSentRequests() {
@@ -52,7 +50,6 @@ public class FriendRequestController {
         }
     }
 
-
     @PostMapping("/{id}/accept")
     public ResponseEntity<?> acceptRequest(@PathVariable String id) {
         try {
@@ -62,7 +59,6 @@ public class FriendRequestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         }
     }
-
 
     @PostMapping("/{id}/reject")
     public ResponseEntity<?> rejectRequest(@PathVariable String id) {

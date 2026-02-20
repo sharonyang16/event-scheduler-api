@@ -46,6 +46,7 @@ public class EventMapper {
                 .updatedAt(eventParticipant.getUpdatedAt())
                 .build();
     }
+
     public EventInviteResponse toEventInviteResponse(EventParticipant eventParticipant) {
         return EventInviteResponse.builder()
                 .inviteId(eventParticipant.getId().toString())

@@ -2,6 +2,7 @@ package event_scheduler_api.api.controller;
 
 import event_scheduler_api.api.dto.response.FriendshipResponse;
 import event_scheduler_api.api.service.FriendshipService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,10 +13,9 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/friends")
+@RequiredArgsConstructor
 public class FriendshipController {
-
-    @Autowired
-    private FriendshipService friendshipService;
+    private final FriendshipService friendshipService;
 
     @GetMapping("/")
     public ResponseEntity<?> fetchMyFriends() {
