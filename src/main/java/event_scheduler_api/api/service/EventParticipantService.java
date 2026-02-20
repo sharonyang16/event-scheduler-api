@@ -7,6 +7,7 @@ import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventParticipantRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,15 +15,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class EventParticipantService {
-    @Autowired
-    private EventParticipantRepository eventParticipantRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventParticipantRepository eventParticipantRepository;
+    private final UserService userService;
+    private final EventMapper eventMapper;
 
     public void createEventParticipant(String email, Event event) throws Exception {
         EventParticipant eventParticipant = new EventParticipant();
@@ -48,7 +45,7 @@ public class EventParticipantService {
 
         return eventParticipants.stream()
                 .filter(eventParticipant -> status == null || eventParticipant.getStatus().equals(status))
-                .map(eventParticipant -> this.eventMapper.toEventInviteResponse(eventParticipant)).toList();
+                .map(this.eventMapper::toEventInviteResponse).toList();
     }
 
     public void updateEventParticipationStatusById(String id, EventParticipationStatus status) throws Exception {

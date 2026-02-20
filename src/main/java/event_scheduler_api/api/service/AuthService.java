@@ -6,6 +6,7 @@ import event_scheduler_api.api.dto.response.AuthResponse;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
 import event_scheduler_api.api.security.JwtUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,18 +16,12 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
 
     public AuthResponse createUser(SignUpRequest request) throws Exception {
         if (this.userRepository.existsByEmail(request.getEmail())) {

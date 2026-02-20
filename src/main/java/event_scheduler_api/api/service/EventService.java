@@ -8,6 +8,7 @@ import event_scheduler_api.api.mapper.EventMapper;
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.EventRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,18 +17,12 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
+@RequiredArgsConstructor
 public class EventService {
-    @Autowired
-    private EventRepository eventRepository;
-
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private EventParticipantService eventParticipantService;
-
-    @Autowired
-    private EventMapper eventMapper;
+    private final EventRepository eventRepository;
+    private final UserService userService;
+    private final EventParticipantService eventParticipantService;
+    private final EventMapper eventMapper;
 
     public Event getEventById(String id) throws Exception {
         return this.eventRepository.findById(UUID.fromString(id))
@@ -41,7 +36,7 @@ public class EventService {
     public List<EventResponse> getAllEvents() throws Exception {
         List<Event> events = this.eventRepository.findAll();
 
-        return events.stream().map(event -> this.eventMapper.toEventResponse(event)).toList();
+        return events.stream().map(this.eventMapper::toEventResponse).toList();
     }
 
     public EventResponse getEvent(String id) throws Exception {

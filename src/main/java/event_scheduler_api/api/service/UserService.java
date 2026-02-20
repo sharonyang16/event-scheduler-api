@@ -4,6 +4,7 @@ import event_scheduler_api.api.dto.response.UserResponse;
 import event_scheduler_api.api.mapper.UserMapper;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,12 +15,10 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private UserMapper userMapper;
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     public User getUserById(String id) throws Exception {
         return this.userRepository.findById(UUID.fromString(id))

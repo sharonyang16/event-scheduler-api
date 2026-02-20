@@ -8,6 +8,7 @@ import event_scheduler_api.api.model.FriendRequest;
 import event_scheduler_api.api.model.FriendRequestStatus;
 import event_scheduler_api.api.model.User;
 import event_scheduler_api.api.repository.FriendRequestRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +17,11 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class FriendRequestService {
-    @Autowired
     private FriendRequestRepository friendRequestRepository;
-
-    @Autowired
     private UserService userService;
-
-    @Autowired
     private FriendshipService friendshipService;
-
-    @Autowired
     private FriendshipMapper friendshipMapper;
 
     private FriendRequest getFriendRequestById(String id) throws Exception {
