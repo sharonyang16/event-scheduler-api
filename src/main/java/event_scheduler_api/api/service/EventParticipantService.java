@@ -1,7 +1,7 @@
 package event_scheduler_api.api.service;
 
 import event_scheduler_api.api.dto.response.EventInviteResponse;
-import event_scheduler_api.api.dto.response.EventParticipantResponse;
+import event_scheduler_api.api.mapper.EventMapper;
 import event_scheduler_api.api.model.Event;
 import event_scheduler_api.api.model.EventParticipant;
 import event_scheduler_api.api.model.EventParticipationStatus;
@@ -22,26 +22,7 @@ public class EventParticipantService {
     private UserService userService;
 
     @Autowired
-    private EventService eventService;
-
-    private EventInviteResponse eventParticipantToInviteResponse(EventParticipant eventParticipant) {
-        return EventInviteResponse.builder()
-                .inviteId(eventParticipant.getId().toString())
-                .event(this.eventService.eventToResponse(eventParticipant.getEvent()))
-                .status(eventParticipant.getStatus())
-                .build();
-    }
-
-    public EventParticipantResponse eventParticipantToResponse(EventParticipant eventParticipant) {
-        return EventParticipantResponse.builder()
-                .email(eventParticipant.getUser().getEmail())
-                .firstName(eventParticipant.getUser().getFirstName())
-                .lastName(eventParticipant.getUser().getLastName())
-                .status(eventParticipant.getStatus())
-                .createdAt(eventParticipant.getCreatedAt())
-                .updatedAt(eventParticipant.getUpdatedAt())
-                .build();
-    }
+    private EventMapper eventMapper;
 
     public void createEventParticipant(String email, Event event) throws Exception {
         EventParticipant eventParticipant = new EventParticipant();
@@ -67,7 +48,7 @@ public class EventParticipantService {
         
         return eventParticipants.stream()
                 .filter(eventParticipant -> status == null || eventParticipant.getStatus().equals(status))
-                .map(this::eventParticipantToInviteResponse).toList();
+                .map(eventParticipant -> this.eventMapper.toEventInviteResponse(eventParticipant)).toList();
     }
 
     public void updateEventParticipationStatusById(String id, EventParticipationStatus status) throws Exception {
