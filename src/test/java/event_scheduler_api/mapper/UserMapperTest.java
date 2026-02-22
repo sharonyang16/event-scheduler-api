@@ -2,7 +2,7 @@ package event_scheduler_api.mapper;
 
 import event_scheduler_api.dto.response.UserResponse;
 import event_scheduler_api.model.User;
-import event_scheduler_api.util.UserDataFactory;
+import event_scheduler_api.util.factory.UserDataFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

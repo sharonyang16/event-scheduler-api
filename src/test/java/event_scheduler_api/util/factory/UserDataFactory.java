@@ -1,4 +1,4 @@
-package event_scheduler_api.util;
+package event_scheduler_api.util.factory;
 
 import event_scheduler_api.model.User;
 

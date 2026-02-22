@@ -63,8 +63,7 @@ public class FriendRequestService {
 
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
-                .map(friendRequest ->
-                        this.friendshipMapper.toReceivedFriendRequestResponse(friendRequest))
+                .map(this.friendshipMapper::toReceivedFriendRequestResponse)
                 .toList();
     }
 
@@ -75,8 +74,7 @@ public class FriendRequestService {
 
         return pendingRequests.stream()
                 .filter(friendRequest -> friendRequest.getStatus().equals(FriendRequestStatus.PENDING))
-                .map(friendRequest ->
-                        this.friendshipMapper.toSentFriendRequestResponse(friendRequest))
+                .map(this.friendshipMapper::toSentFriendRequestResponse)
                 .toList();
     }
 
