@@ -35,7 +35,7 @@ public class AuthService {
 
         String token = this.jwtUtil.generateToken(request.getEmail());
 
-        return AuthResponse.builder().token(token).email(user.getEmail()).build();
+        return AuthResponse.builder().token(token).build();
     }
 
     public AuthResponse loginUser(LoginRequest request) throws Exception {
@@ -46,10 +46,11 @@ public class AuthService {
                 )
         );
 
-        User user = this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("User with email not found!"));
+        // Check that user exists 
+        this.userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new Exception("User with email not found!"));
 
         String token = this.jwtUtil.generateToken(request.getEmail());
 
-        return AuthResponse.builder().token(token).email(user.getEmail()).build();
+        return AuthResponse.builder().token(token).build();
     }
 }
