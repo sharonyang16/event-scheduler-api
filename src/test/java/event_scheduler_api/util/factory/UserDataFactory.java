@@ -7,7 +7,7 @@ import java.util.UUID;
 public class UserDataFactory {
     private UserDataFactory(){}
 
-    public static User createUser() {
+    public static User createUser1() {
         User user = new User();
         user.setEmail("someone@email.com");
         user.setPassword("password123");
@@ -16,4 +16,6 @@ public class UserDataFactory {
 
         return user;
     }
+
+
 }

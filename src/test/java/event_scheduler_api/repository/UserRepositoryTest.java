@@ -23,7 +23,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("findByEmail should return user when given email exists")
     void findByEmailValid() {
-        User user = UserDataFactory.createUser();
+        User user = UserDataFactory.createUser1();
         this.entityManager.persistAndFlush(user);
 
         Optional<User> foundUser = this.repository.findByEmail("someone@email.com");
@@ -44,7 +44,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("existsByEmail should return true when given email exists")
     void existsByEmailTrue() {
-        User user = UserDataFactory.createUser();
+        User user = UserDataFactory.createUser1();
         this.entityManager.persistAndFlush(user);
 
         boolean result = this.repository.existsByEmail("someone@email.com");
@@ -61,7 +61,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("deleteByEmail should delete user by email when given email exists")
     void deleteByEmailValid() {
-        User user = UserDataFactory.createUser();
+        User user = UserDataFactory.createUser1();
         this.entityManager.persistAndFlush(user);
 
         Optional<User> foundUser = this.repository.findByEmail("someone@email.com");
