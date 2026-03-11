@@ -17,5 +17,13 @@ public class UserDataFactory {
         return user;
     }
 
+    public static User createUser2() {
+        User user = new User();
+        user.setEmail("coolperson@email.com");
+        user.setPassword("password123");
+        user.setFirstName("Jane");
+        user.setLastName("Doe");
 
+        return user;
+    }
 }
